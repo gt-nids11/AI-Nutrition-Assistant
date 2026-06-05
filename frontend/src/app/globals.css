@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
+}
+
 @font-face {
   font-family: "Virgil";
   src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw/dist/fonts/Virgil.woff2") format("woff2");
@@ -16,6 +20,7 @@ body {
   color: var(--foreground);
   font-family: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif !important;
 }
+
 
 /* Custom Scrollbars in soft rose tones */
 ::-webkit-scrollbar {
