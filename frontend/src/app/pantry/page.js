@@ -8,11 +8,11 @@ import {
   Edit3, 
   Search, 
   Calendar, 
-  PlusCircle, 
   AlertTriangle,
   Scale,
   X,
-  Loader
+  Loader,
+  AlertCircle
 } from 'lucide-react';
 
 export default function PantryPage() {
@@ -144,11 +144,11 @@ export default function PantryPage() {
     const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
     if (daysLeft < 0) {
-      return { text: 'Expired', style: 'bg-red-950/40 text-red-400 border-red-900/40' };
+      return { text: 'Expired', style: 'bg-red-100 text-red-700 border-red-200' };
     } else if (daysLeft <= 2) {
-      return { text: daysLeft === 0 ? 'Expires today' : daysLeft === 1 ? 'Expires tomorrow' : `Expires in ${daysLeft} days`, style: 'bg-amber-950/40 text-amber-400 border-amber-900/40' };
+      return { text: daysLeft === 0 ? 'Expires today' : daysLeft === 1 ? 'Expires tomorrow' : `Expires in ${daysLeft} days`, style: 'bg-amber-100 text-amber-700 border-amber-200' };
     } else {
-      return { text: `${daysLeft} days left`, style: 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40' };
+      return { text: `${daysLeft} days left`, style: 'bg-pink-100 text-pink-700 border-pink-200' };
     }
   };
 
@@ -159,11 +159,11 @@ export default function PantryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Pantry & Fridge</h1>
-          <p className="text-sm text-zinc-400">Keep track of your ingredients to minimize waste and generate recipes.</p>
+          <p className="text-sm text-rose-700 font-semibold">Keep track of your ingredients to minimize waste and generate recipes.</p>
         </div>
         <button
           onClick={handleOpenAddModal}
-          className="flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-3 rounded-xl shadow-lg transition-all"
+          className="flex items-center justify-center space-x-1.5 bg-pink-500 hover:bg-pink-400 text-white font-extrabold text-sm px-4 py-3 rounded-xl shadow-lg shadow-pink-500/10 transition-all"
         >
           <Plus size={16} />
           <span>Add Ingredient</span>
@@ -173,7 +173,7 @@ export default function PantryPage() {
       {/* Control Actions */}
       <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full">
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-rose-450">
             <Search size={18} />
           </span>
           <input
@@ -181,7 +181,7 @@ export default function PantryPage() {
             placeholder="Search ingredients in your pantry..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-zinc-900/40 border border-zinc-800 rounded-xl py-3 pl-10 pr-3 text-sm text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-500"
+            className="w-full bg-white border border-pink-200/50 rounded-xl py-3 pl-10 pr-3 text-sm text-rose-950 focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all placeholder-rose-400 font-semibold"
           />
         </div>
       </div>
@@ -189,13 +189,13 @@ export default function PantryPage() {
       {/* Main Inventory Grid */}
       {loading ? (
         <div className="flex h-48 items-center justify-center">
-          <Loader className="animate-spin text-emerald-500" size={32} />
+          <Loader className="animate-spin text-pink-500" size={32} />
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="bg-zinc-900/20 border border-zinc-800 rounded-3xl p-12 text-center flex flex-col items-center justify-center">
-          <AlertTriangle size={36} className="text-zinc-600 mb-3" />
-          <h3 className="text-lg font-bold text-zinc-300">No items found</h3>
-          <p className="text-sm text-zinc-500 max-w-sm mt-1">
+        <div className="bg-pink-50/30 border border-pink-100 rounded-3xl p-12 text-center flex flex-col items-center justify-center">
+          <AlertTriangle size={36} className="text-pink-300 mb-3" />
+          <h3 className="text-lg font-extrabold text-rose-800">No items found</h3>
+          <p className="text-sm text-rose-600 mt-1 font-semibold">
             {search ? 'No ingredients match your query.' : 'Your pantry is currently empty. Click "Add Ingredient" to start logging!'}
           </p>
         </div>
@@ -206,39 +206,39 @@ export default function PantryPage() {
             return (
               <div 
                 key={item._id}
-                className="bg-zinc-900/40 border border-zinc-850 hover:border-zinc-800 hover:bg-zinc-900/60 p-5 rounded-2xl flex flex-col justify-between space-y-4 transition-all relative overflow-hidden group"
+                className="bg-white border border-pink-100 hover:border-pink-200 hover:bg-pink-50/10 p-5 rounded-2xl flex flex-col justify-between space-y-4 transition-all relative overflow-hidden group shadow-sm shadow-pink-100/10"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between">
-                    <h3 className="font-extrabold text-lg truncate text-zinc-200 capitalize">{item.name}</h3>
+                    <h3 className="font-extrabold text-lg truncate text-rose-950 capitalize">{item.name}</h3>
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${badge.style}`}>
                       {badge.text}
                     </span>
                   </div>
                   
-                  <div className="flex items-center space-x-4 text-xs text-zinc-400">
+                  <div className="flex items-center space-x-4 text-xs text-rose-700 font-semibold">
                     <div className="flex items-center space-x-1">
-                      <Scale size={14} className="text-zinc-500" />
+                      <Scale size={14} className="text-pink-400" />
                       <span>{item.quantity} {item.unit}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Calendar size={14} className="text-zinc-500" />
+                      <Calendar size={14} className="text-pink-400" />
                       <span>Exp: {new Date(item.expiryDate).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex space-x-2 border-t border-zinc-800/60 pt-3">
+                <div className="flex space-x-2 border-t border-pink-50 pt-3">
                   <button
                     onClick={() => handleOpenEditModal(item)}
-                    className="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700/80 text-zinc-300 text-xs font-bold rounded-xl border border-zinc-750 flex items-center justify-center space-x-1.5 transition-all"
+                    className="flex-1 py-2 bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-bold rounded-xl border border-pink-200/50 flex items-center justify-center space-x-1.5 transition-all"
                   >
                     <Edit3 size={12} />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="py-2 px-3 bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 text-red-400 hover:text-red-300 text-xs font-bold rounded-xl flex items-center justify-center transition-all"
+                    className="py-2 px-3 bg-red-50 hover:bg-red-100 border border-red-200/60 text-red-650 hover:text-red-700 text-xs font-bold rounded-xl flex items-center justify-center transition-all"
                     title="Delete"
                   >
                     <Trash2 size={12} />
@@ -252,22 +252,22 @@ export default function PantryPage() {
 
       {/* CRUD Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 p-6 rounded-3xl relative animate-fade-in shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-pink-900/10 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md bg-white border border-pink-150 p-6 rounded-3xl relative animate-fade-in shadow-2xl">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-pink-400 hover:bg-pink-50 hover:text-pink-600 transition-colors"
             >
               <X size={18} />
             </button>
 
-            <h3 className="text-xl font-bold text-zinc-100 mb-4">
+            <h3 className="text-xl font-extrabold text-rose-955 mb-4">
               {editingItem ? 'Edit Ingredient' : 'Add Ingredient'}
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 font-semibold text-xs text-rose-700">
               {formError && (
-                <div className="flex items-center space-x-2 text-xs text-red-400 bg-red-950/20 border border-red-900/30 p-3 rounded-xl">
+                <div className="flex items-center space-x-2 text-xs text-red-600 bg-red-50 border border-red-200 p-3 rounded-xl">
                   <AlertCircle size={16} />
                   <span>{formError}</span>
                 </div>
@@ -275,13 +275,13 @@ export default function PantryPage() {
 
               {/* Ingredient Name */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Ingredient Name</label>
+                <label className="block uppercase tracking-wider mb-1.5 font-bold">Ingredient Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Paneer, Eggs, Tomatoes"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 px-3.5 text-sm text-white placeholder-zinc-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                   required
                 />
               </div>
@@ -289,22 +289,22 @@ export default function PantryPage() {
               {/* Quantity & Unit */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Quantity</label>
+                  <label className="block uppercase tracking-wider mb-1.5 font-bold">Quantity</label>
                   <input
                     type="number"
                     placeholder="e.g. 5"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 px-3.5 text-sm text-white placeholder-zinc-650 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Unit</label>
+                  <label className="block uppercase tracking-wider mb-1.5 font-bold">Unit</label>
                   <select
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
-                    className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 px-3 text-sm text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3 text-sm text-rose-950 focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all font-semibold"
                   >
                     <option value="pcs">pcs (pieces)</option>
                     <option value="grams">grams (g)</option>
@@ -318,12 +318,12 @@ export default function PantryPage() {
 
               {/* Expiry Date */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Expiry Date</label>
+                <label className="block uppercase tracking-wider mb-1.5 font-bold">Expiry Date</label>
                 <input
                   type="date"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 px-3.5 text-sm text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all font-semibold"
                   required
                 />
               </div>
@@ -333,14 +333,14 @@ export default function PantryPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-750 text-zinc-400 hover:text-zinc-200 text-sm font-semibold rounded-xl border border-zinc-700 transition-all"
+                  className="flex-1 py-3 bg-pink-50 hover:bg-pink-100 text-pink-700 text-sm font-bold rounded-xl border border-pink-150 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-1.5"
+                  className="flex-1 py-3 bg-pink-500 hover:bg-pink-400 text-white text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-1.5"
                 >
                   {submitting ? (
                     <Loader size={18} className="animate-spin" />

@@ -193,7 +193,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <Loader className="animate-spin text-emerald-500" size={32} />
+        <Loader className="animate-spin text-pink-500" size={32} />
       </div>
     );
   }
@@ -203,31 +203,31 @@ export default function SettingsPage() {
       
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight flex items-center space-x-2">
-          <Settings size={28} className="text-zinc-400" />
+          <Settings size={28} className="text-pink-550" />
           <span>Profile Settings</span>
         </h1>
-        <p className="text-sm text-zinc-400">Configure health goals, dietary preferences, and custom AI settings.</p>
+        <p className="text-sm text-rose-700 font-semibold">Configure health goals, dietary preferences, and custom AI settings.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Stats card */}
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 space-y-4">
-          <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5 border-b border-zinc-800 pb-3">
-            <User size={16} className="text-emerald-400" />
+        <div className="bg-white border border-pink-100 rounded-3xl p-6 space-y-4 shadow-sm shadow-pink-100/10">
+          <h3 className="text-sm font-bold text-rose-800/90 uppercase tracking-widest flex items-center space-x-1.5 border-b border-pink-50 pb-3">
+            <User size={16} className="text-pink-500" />
             <span>Health & Fitness Metrics</span>
           </h3>
 
-          <form onSubmit={handleStatsSubmit} className="space-y-4 text-xs font-semibold">
-            {statsSuccess && <p className="text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 p-2.5 rounded-xl">{statsSuccess}</p>}
-            {statsError && <p className="text-red-400 bg-red-950/20 border border-red-900/30 p-2.5 rounded-xl">{statsError}</p>}
+          <form onSubmit={handleStatsSubmit} className="space-y-4 text-xs font-bold text-rose-700">
+            {statsSuccess && <p className="text-pink-750 bg-pink-50 border border-pink-200 p-2.5 rounded-xl font-bold">{statsSuccess}</p>}
+            {statsError && <p className="text-red-750 bg-red-50 border border-red-200 p-2.5 rounded-xl font-bold">{statsError}</p>}
 
             <div>
-              <label className="block text-zinc-400 uppercase tracking-wider mb-1">Gender</label>
+              <label className="block uppercase tracking-wider mb-1">Gender</label>
               <select 
                 value={gender} 
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-3 text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full bg-pink-50/10 border border-pink-100 rounded-xl py-3 px-3 text-rose-955 font-bold focus:border-pink-500 focus:outline-none"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -237,40 +237,40 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="block text-zinc-400 uppercase tracking-wider mb-1 flex items-center"><Calendar size={12} className="mr-1 text-zinc-500" />Age</label>
+                <label className="block uppercase tracking-wider mb-1 flex items-center"><Calendar size={12} className="mr-1 text-pink-400" />Age</label>
                 <input
                   type="number"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
-                  className="w-full text-center bg-zinc-950/50 border border-zinc-800 rounded-xl py-2.5 px-2 text-white focus:border-emerald-500 focus:outline-none"
+                  className="w-full text-center bg-pink-50/10 border border-pink-100 rounded-xl py-2.5 px-2 text-rose-950 font-bold focus:border-pink-500 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-zinc-400 uppercase tracking-wider mb-1 flex items-center"><Ruler size={12} className="mr-1 text-zinc-500" />Height</label>
+                <label className="block uppercase tracking-wider mb-1 flex items-center"><Ruler size={12} className="mr-1 text-pink-400" />Height</label>
                 <input
                   type="number"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  className="w-full text-center bg-zinc-950/50 border border-zinc-800 rounded-xl py-2.5 px-2 text-white focus:border-emerald-500 focus:outline-none"
+                  className="w-full text-center bg-pink-50/10 border border-pink-100 rounded-xl py-2.5 px-2 text-rose-950 font-bold focus:border-pink-500 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-zinc-400 uppercase tracking-wider mb-1 flex items-center"><Scale size={12} className="mr-1 text-zinc-500" />Weight</label>
+                <label className="block uppercase tracking-wider mb-1 flex items-center"><Scale size={12} className="mr-1 text-pink-400" />Weight</label>
                 <input
                   type="number"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  className="w-full text-center bg-zinc-950/50 border border-zinc-800 rounded-xl py-2.5 px-2 text-white focus:border-emerald-500 focus:outline-none"
+                  className="w-full text-center bg-pink-50/10 border border-pink-100 rounded-xl py-2.5 px-2 text-rose-950 font-bold focus:border-pink-500 focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-zinc-400 uppercase tracking-wider mb-1">Activity Level</label>
+              <label className="block uppercase tracking-wider mb-1">Activity Level</label>
               <select 
                 value={activityLevel} 
                 onChange={(e) => setActivityLevel(e.target.value)}
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-3 text-white focus:border-emerald-500 focus:outline-none font-sans"
+                className="w-full bg-pink-50/10 border border-pink-100 rounded-xl py-3 px-3 text-rose-950 font-bold focus:border-pink-500 focus:outline-none font-sans"
               >
                 <option value="sedentary">Sedentary (No exercise)</option>
                 <option value="light">Light (1-3 days/week)</option>
@@ -281,11 +281,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-zinc-400 uppercase tracking-wider mb-1">Health Goal</label>
+              <label className="block uppercase tracking-wider mb-1">Health Goal</label>
               <select 
                 value={goal} 
                 onChange={(e) => setGoal(e.target.value)}
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-3 text-white focus:border-emerald-500 focus:outline-none font-sans"
+                className="w-full bg-pink-50/10 border border-pink-100 rounded-xl py-3 px-3 text-rose-955 font-bold focus:border-pink-500 focus:outline-none font-sans"
               >
                 <option value="weight_loss">Weight Loss</option>
                 <option value="weight_gain">Weight Gain</option>
@@ -298,7 +298,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={savingStats}
-              className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center"
+              className="w-full py-3 bg-pink-500 hover:bg-pink-400 text-white text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-lg shadow-pink-500/10"
             >
               {savingStats ? <Loader size={14} className="animate-spin" /> : <span>Update Stats</span>}
             </button>
@@ -306,18 +306,18 @@ export default function SettingsPage() {
         </div>
 
         {/* Dietary preferences card */}
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 space-y-4">
-          <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5 border-b border-zinc-800 pb-3">
-            <Scale size={16} className="text-indigo-400" />
+        <div className="bg-white border border-pink-100 rounded-3xl p-6 space-y-4 shadow-sm shadow-pink-100/10">
+          <h3 className="text-sm font-bold text-rose-800/90 uppercase tracking-widest flex items-center space-x-1.5 border-b border-pink-50 pb-3">
+            <Scale size={16} className="text-rose-500" />
             <span>Preferences & Restrictions</span>
           </h3>
 
           <form onSubmit={handlePrefsSubmit} className="space-y-5">
-            {prefsSuccess && <p className="text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 p-2.5 rounded-xl text-xs font-semibold">{prefsSuccess}</p>}
-            {prefsError && <p className="text-red-400 bg-red-950/20 border border-red-900/30 p-2.5 rounded-xl text-xs font-semibold">{prefsError}</p>}
+            {prefsSuccess && <p className="text-pink-750 bg-pink-50 border border-pink-200 p-2.5 rounded-xl text-xs font-bold">{prefsSuccess}</p>}
+            {prefsError && <p className="text-red-750 bg-red-50 border border-red-200 p-2.5 rounded-xl text-xs font-bold">{prefsError}</p>}
 
             <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Dietary Exclusions</label>
+              <label className="block text-xs font-bold text-rose-650 uppercase tracking-wider">Dietary Exclusions</label>
               <div className="flex flex-wrap gap-2">
                 {restrictionOptions.map(option => {
                   const isSelected = dietaryRestrictions.includes(option.id);
@@ -328,8 +328,8 @@ export default function SettingsPage() {
                       onClick={() => toggleRestriction(option.id)}
                       className={`px-3 py-1.5 rounded-full border text-[10px] font-bold flex items-center space-x-1 transition-all
                         ${isSelected 
-                          ? 'border-emerald-500 bg-emerald-950/30 text-emerald-400' 
-                          : 'border-zinc-800 bg-zinc-950/50 text-zinc-500 hover:border-zinc-700'}`}
+                          ? 'border-pink-500 bg-pink-500/10 text-pink-650' 
+                          : 'border-pink-100 bg-pink-50/10 text-rose-550 hover:border-pink-200 hover:text-rose-750'}`}
                     >
                       {isSelected && <Check size={10} />}
                       <span>{option.name}</span>
@@ -340,7 +340,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Favorite Cuisines</label>
+              <label className="block text-xs font-bold text-rose-650 uppercase tracking-wider">Favorite Cuisines</label>
               <div className="flex flex-wrap gap-2">
                 {cuisineOptions.map(option => {
                   const isSelected = favoriteCuisines.includes(option.id);
@@ -351,8 +351,8 @@ export default function SettingsPage() {
                       onClick={() => toggleCuisine(option.id)}
                       className={`px-3 py-1.5 rounded-full border text-[10px] font-bold flex items-center space-x-1 transition-all
                         ${isSelected 
-                          ? 'border-emerald-500 bg-emerald-950/30 text-emerald-400' 
-                          : 'border-zinc-800 bg-zinc-950/50 text-zinc-500 hover:border-zinc-700'}`}
+                          ? 'border-pink-500 bg-pink-500/10 text-pink-650' 
+                          : 'border-pink-100 bg-pink-50/10 text-rose-550 hover:border-pink-200 hover:text-rose-750'}`}
                     >
                       {isSelected && <Check size={10} />}
                       <span>{option.name}</span>
@@ -365,7 +365,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={savingPrefs}
-              className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-750 text-zinc-200 text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-md"
+              className="w-full py-3 bg-pink-50 hover:bg-pink-100 border border-pink-200/50 text-pink-700 text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-md"
             >
               {savingPrefs ? <Loader size={14} className="animate-spin" /> : <span>Update Preferences</span>}
             </button>
@@ -373,22 +373,22 @@ export default function SettingsPage() {
         </div>
 
         {/* AI key settings card */}
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 space-y-4">
-          <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5 border-b border-zinc-800 pb-3">
-            <Key size={16} className="text-teal-400" />
+        <div className="bg-white border border-pink-100 rounded-3xl p-6 space-y-4 shadow-sm shadow-pink-100/10">
+          <h3 className="text-sm font-bold text-rose-800/90 uppercase tracking-widest flex items-center space-x-1.5 border-b border-pink-50 pb-3">
+            <Key size={16} className="text-pink-500" />
             <span>Kitchen Copilot AI Key</span>
           </h3>
 
-          <form onSubmit={handleKeysSubmit} className="space-y-4 text-xs font-semibold">
-            {keysSuccess && <p className="text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 p-2.5 rounded-xl">{keysSuccess}</p>}
-            {keysError && <p className="text-red-400 bg-red-950/20 border border-red-900/30 p-2.5 rounded-xl">{keysError}</p>}
+          <form onSubmit={handleKeysSubmit} className="space-y-4 text-xs font-bold text-rose-750">
+            {keysSuccess && <p className="text-pink-750 bg-pink-50 border border-pink-200 p-2.5 rounded-xl">{keysSuccess}</p>}
+            {keysError && <p className="text-red-750 bg-red-50 border border-red-200 p-2.5 rounded-xl">{keysError}</p>}
 
             <div>
-              <label className="block text-zinc-400 uppercase tracking-wider mb-1">Select AI Engine</label>
+              <label className="block uppercase tracking-wider mb-1">Select AI Engine</label>
               <select 
                 value={provider} 
                 onChange={(e) => setProvider(e.target.value)}
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-3 text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full bg-pink-50/10 border border-pink-100 rounded-xl py-3 px-3 text-rose-955 font-bold focus:border-pink-500 focus:outline-none font-semibold"
               >
                 <option value="none">Local Mock Engine (Out-of-the-box)</option>
                 <option value="gemini">Google Gemini API</option>
@@ -398,16 +398,16 @@ export default function SettingsPage() {
 
             {provider !== 'none' && (
               <div className="space-y-1">
-                <label className="block text-zinc-400 uppercase tracking-wider mb-1">Paste API Key</label>
+                <label className="block uppercase tracking-wider mb-1">Paste API Key</label>
                 <input
                   type="password"
                   placeholder="e.g. AIzaSy..."
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 px-3.5 text-sm text-zinc-200 focus:border-emerald-500 focus:outline-none"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 font-bold focus:border-pink-500 focus:outline-none"
                 />
-                <p className="text-[9px] text-zinc-500 font-semibold leading-relaxed flex items-start space-x-1 mt-1">
-                  <Info size={12} className="text-emerald-500 shrink-0 mt-0.5" />
+                <p className="text-[9px] text-rose-600 font-bold leading-relaxed flex items-start space-x-1 mt-1 font-semibold">
+                  <Info size={12} className="text-pink-500 shrink-0 mt-0.5" />
                   <span>Keys are stored in your private database profile and only used when communicating with AI providers.</span>
                 </p>
               </div>
@@ -416,7 +416,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={savingKeys}
-              className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-750 text-zinc-200 text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-md"
+              className="w-full py-3 bg-pink-50 hover:bg-pink-100 border border-pink-200/50 text-pink-700 text-xs font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-md"
             >
               {savingKeys ? <Loader size={14} className="animate-spin" /> : <span>Save API Config</span>}
             </button>

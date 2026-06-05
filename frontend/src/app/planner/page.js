@@ -10,7 +10,6 @@ import {
   Square,
   ChevronRight,
   Utensils,
-  ChevronDown,
   Info,
   Loader
 } from 'lucide-react';
@@ -96,7 +95,7 @@ export default function PlannerPage() {
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <Loader className="animate-spin text-emerald-500" size={32} />
+        <Loader className="animate-spin text-pink-500" size={32} />
       </div>
     );
   }
@@ -111,13 +110,13 @@ export default function PlannerPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Weekly Meal Planner</h1>
-          <p className="text-sm text-zinc-400">Generate structured daily meals optimized for nutrient values and pantry stock.</p>
+          <p className="text-sm text-rose-700 font-semibold font-sans">Generate structured daily meals optimized for nutrient values and pantry stock.</p>
         </div>
 
         <button
           onClick={handleGeneratePlan}
           disabled={generatingPlan}
-          className="flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-3 rounded-xl shadow-lg transition-all disabled:opacity-50 shrink-0"
+          className="flex items-center justify-center space-x-1.5 bg-pink-500 hover:bg-pink-400 text-white font-extrabold text-sm px-4 py-3 rounded-xl shadow-lg shadow-pink-500/10 transition-all disabled:opacity-50 shrink-0"
         >
           {generatingPlan ? (
             <Loader size={16} className="animate-spin" />
@@ -129,18 +128,18 @@ export default function PlannerPage() {
       </div>
 
       {daysList.length === 0 ? (
-        <div className="bg-zinc-900/20 border border-zinc-800 rounded-3xl p-16 text-center flex flex-col items-center justify-center space-y-4">
-          <Calendar size={48} className="text-zinc-650" />
+        <div className="bg-pink-50/20 border border-pink-100 rounded-3xl p-16 text-center flex flex-col items-center justify-center space-y-4">
+          <Calendar size={48} className="text-pink-300 animate-bounce" />
           <div>
-            <h3 className="text-lg font-bold text-zinc-350">No Weekly Plan Generated</h3>
-            <p className="text-xs text-zinc-550 max-w-sm mt-1">
+            <h3 className="text-lg font-bold text-rose-800">No Weekly Plan Generated</h3>
+            <p className="text-xs text-rose-600 max-w-sm mt-1 font-semibold">
               Set up a personalized, waste-conscious meal plan that covers breakfast, lunch, dinner, and snacks for the week.
             </p>
           </div>
           <button
             onClick={handleGeneratePlan}
             disabled={generatingPlan}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-md transition-all flex items-center space-x-2"
+            className="px-6 py-3 bg-pink-500 hover:bg-pink-400 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center space-x-2"
           >
             {generatingPlan ? <Loader size={14} className="animate-spin" /> : <Sparkles size={14} />}
             <span>Create Plan Now</span>
@@ -150,10 +149,10 @@ export default function PlannerPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           
           {/* Planner board */}
-          <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 flex flex-col space-y-6">
+          <div className="lg:col-span-2 bg-white border border-pink-100 rounded-3xl p-6 flex flex-col space-y-6 shadow-sm shadow-pink-100/10">
             
             {/* Days Horizontal selector */}
-            <div className="flex space-x-1.5 overflow-x-auto pb-2 shrink-0 border-b border-zinc-800/80">
+            <div className="flex space-x-1.5 overflow-x-auto pb-2 shrink-0 border-b border-pink-50">
               {daysList.map((dayItem, index) => (
                 <button
                   key={dayItem.day}
@@ -164,8 +163,8 @@ export default function PlannerPage() {
                   }}
                   className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all shrink-0
                     ${activeDayIndex === index 
-                      ? 'bg-emerald-600 text-white font-black shadow-md shadow-emerald-950/20' 
-                      : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-transparent'}`}
+                      ? 'bg-pink-500 text-white font-extrabold shadow-md shadow-pink-500/10' 
+                      : 'text-rose-900/70 hover:bg-pink-50 hover:text-pink-900 border border-transparent'}`}
                 >
                   {dayItem.day}
                 </button>
@@ -188,57 +187,57 @@ export default function PlannerPage() {
                         onClick={() => setExpandedMeal(type)}
                         className={`w-full p-3.5 rounded-xl border text-left flex justify-between items-center transition-all group
                           ${isSelected 
-                            ? 'border-emerald-500 bg-emerald-950/10 text-emerald-400 shadow-md shadow-emerald-500/5' 
-                            : 'border-zinc-800/80 bg-zinc-950/20 text-zinc-400 hover:border-zinc-750 hover:text-zinc-200'}`}
+                            ? 'border-pink-500 bg-pink-500/10 text-pink-650' 
+                            : 'border-pink-100 bg-pink-50/10 text-rose-500 hover:border-pink-200 hover:text-rose-800'}`}
                       >
                         <div>
-                          <p className="text-[10px] uppercase font-extrabold tracking-wider text-zinc-550 group-hover:text-emerald-500">{type}</p>
+                          <p className="text-[10px] uppercase font-extrabold tracking-wider text-rose-500 group-hover:text-pink-650">{type}</p>
                           <p className="text-xs font-bold truncate max-w-[130px] mt-0.5">{meal?.name || 'Loading...'}</p>
                         </div>
-                        <ChevronRight size={14} className={isSelected ? 'text-emerald-400' : 'text-zinc-650 group-hover:text-zinc-400'} />
+                        <ChevronRight size={14} className={isSelected ? 'text-pink-600' : 'text-rose-400 group-hover:text-pink-600'} />
                       </button>
                     );
                   })}
                 </div>
 
                 {/* Extended Details Panel */}
-                <div className="md:col-span-8 bg-zinc-950/40 border border-zinc-850 p-5 rounded-2xl space-y-4">
+                <div className="md:col-span-8 bg-pink-50/30 border border-pink-100 p-5 rounded-2xl space-y-4">
                   <div>
-                    <span className="text-[9px] font-black uppercase bg-emerald-950/40 text-emerald-400 border border-emerald-900/30 px-2 py-0.5 rounded-full capitalize">
+                    <span className="text-[9px] font-bold uppercase bg-pink-100 text-pink-750 border border-pink-200/50 px-2 py-0.5 rounded-full capitalize">
                       {expandedMeal}
                     </span>
-                    <h3 className="text-xl font-extrabold text-zinc-200 mt-2">
+                    <h3 className="text-xl font-extrabold text-rose-950 mt-2">
                       {currentDayPlan.meals[expandedMeal]?.name}
                     </h3>
                   </div>
 
                   {/* Macros info */}
-                  <div className="grid grid-cols-4 gap-2 bg-zinc-900/40 border border-zinc-850 p-3 rounded-xl text-center">
+                  <div className="grid grid-cols-4 gap-2 bg-white border border-pink-100/60 p-3 rounded-xl text-center shadow-sm">
                     <div>
-                      <p className="text-[8px] uppercase font-bold text-zinc-500">Calories</p>
-                      <p className="text-xs font-bold text-emerald-400">{currentDayPlan.meals[expandedMeal]?.calories} kcal</p>
+                      <p className="text-[8px] uppercase font-bold text-rose-500/60">Calories</p>
+                      <p className="text-xs font-bold text-pink-600">{currentDayPlan.meals[expandedMeal]?.calories} kcal</p>
                     </div>
                     <div>
-                      <p className="text-[8px] uppercase font-bold text-zinc-500">Protein</p>
-                      <p className="text-xs font-bold text-zinc-200">{currentDayPlan.meals[expandedMeal]?.protein}g</p>
+                      <p className="text-[8px] uppercase font-bold text-rose-500/60">Protein</p>
+                      <p className="text-xs font-bold text-rose-900">{currentDayPlan.meals[expandedMeal]?.protein}g</p>
                     </div>
                     <div>
-                      <p className="text-[8px] uppercase font-bold text-zinc-500">Carbs</p>
-                      <p className="text-xs font-bold text-zinc-200">{currentDayPlan.meals[expandedMeal]?.carbs}g</p>
+                      <p className="text-[8px] uppercase font-bold text-rose-500/60">Carbs</p>
+                      <p className="text-xs font-bold text-rose-900">{currentDayPlan.meals[expandedMeal]?.carbs}g</p>
                     </div>
                     <div>
-                      <p className="text-[8px] uppercase font-bold text-zinc-500">Fat</p>
-                      <p className="text-xs font-bold text-zinc-200">{currentDayPlan.meals[expandedMeal]?.fat}g</p>
+                      <p className="text-[8px] uppercase font-bold text-rose-500/60">Fat</p>
+                      <p className="text-xs font-bold text-rose-900">{currentDayPlan.meals[expandedMeal]?.fat}g</p>
                     </div>
                   </div>
 
                   {/* Description recipe */}
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center space-x-1">
-                      <Utensils size={12} className="text-emerald-400" />
+                  <div className="space-y-1.5 font-semibold">
+                    <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest flex items-center space-x-1">
+                      <Utensils size={12} className="text-pink-500" />
                       <span>Prep Directions</span>
                     </p>
-                    <p className="text-xs leading-relaxed text-zinc-400">
+                    <p className="text-xs leading-relaxed text-rose-800">
                       {currentDayPlan.meals[expandedMeal]?.recipe || 'No recipe details included. Follow standard nutritional recommendations.'}
                     </p>
                   </div>
@@ -249,21 +248,21 @@ export default function PlannerPage() {
           </div>
 
           {/* Grocery list module */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 flex flex-col justify-between space-y-6">
+          <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-sm shadow-pink-100/10">
             <div className="space-y-4 flex-1 flex flex-col min-h-0">
               
               {/* Header */}
-              <div className="flex justify-between items-center shrink-0 border-b border-zinc-800 pb-3">
-                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5">
-                  <ShoppingCart size={14} className="text-teal-400" />
+              <div className="flex justify-between items-center shrink-0 border-b border-pink-50 pb-3">
+                <h3 className="text-sm font-bold text-rose-800/90 uppercase tracking-widest flex items-center space-x-1.5">
+                  <ShoppingCart size={14} className="text-pink-500" />
                   <span>Grocery Checklist</span>
                 </h3>
                 
                 <button
                   onClick={() => handleGenerateGrocery(false)}
                   disabled={generatingGrocery}
-                  className="p-1 rounded-lg text-zinc-500 hover:text-emerald-400 transition-colors"
-                  title="Regenerate shopping checklist"
+                  className="p-1 rounded-lg text-rose-500 hover:text-pink-600 transition-colors"
+                  title="Sync checklist"
                 >
                   {generatingGrocery ? <Loader size={14} className="animate-spin" /> : <span className="text-[9px] uppercase font-bold hover:underline">Sync</span>}
                 </button>
@@ -274,9 +273,9 @@ export default function PlannerPage() {
                   
                   {/* Missing items checklist */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Missing Pantry ingredients</p>
+                    <p className="text-[10px] font-bold text-rose-500/80 uppercase tracking-wider">Missing Pantry ingredients</p>
                     {groceryList.missingIngredients.length === 0 ? (
-                      <p className="text-[10px] text-zinc-650 italic">None. Your pantry is stocked!</p>
+                      <p className="text-[10px] text-rose-450 italic">None. Your pantry is stocked!</p>
                     ) : (
                       <div className="space-y-1.5">
                         {groceryList.missingIngredients.map(item => {
@@ -285,12 +284,12 @@ export default function PlannerPage() {
                             <button
                               key={item}
                               onClick={() => toggleChecklist(item)}
-                              className="w-full flex items-start space-x-2 text-left py-1 text-xs text-zinc-400 hover:text-zinc-200 transition-all font-medium"
+                              className="w-full flex items-start space-x-2 text-left py-1 text-xs text-rose-700/80 hover:text-rose-950 transition-all font-bold"
                             >
-                              <span className="shrink-0 mt-0.5 text-emerald-400">
+                              <span className="shrink-0 mt-0.5 text-pink-500">
                                 {crossed ? <CheckSquare size={14} /> : <Square size={14} />}
                               </span>
-                              <span className={crossed ? 'line-through text-zinc-600' : ''}>{item}</span>
+                              <span className={crossed ? 'line-through text-rose-400/60 font-semibold' : ''}>{item}</span>
                             </button>
                           );
                         })}
@@ -300,8 +299,8 @@ export default function PlannerPage() {
 
                   {/* Protein rich recommendations */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Goal Protein Boosters</p>
-                    <ul className="list-disc list-inside text-xs text-zinc-400 space-y-1 font-medium pl-1">
+                    <p className="text-[10px] font-bold text-rose-500/80 uppercase tracking-wider">Goal Protein Boosters</p>
+                    <ul className="list-disc list-inside text-xs text-rose-800 space-y-1 font-bold pl-1">
                       {groceryList.proteinRichFoods.slice(0, 3).map(item => (
                         <li key={item} className="capitalize">{item}</li>
                       ))}
@@ -310,8 +309,8 @@ export default function PlannerPage() {
 
                   {/* Greens Recommendations */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Fruits & Veggies Suggestions</p>
-                    <ul className="list-disc list-inside text-xs text-zinc-400 space-y-1 font-medium pl-1">
+                    <p className="text-[10px] font-bold text-rose-500/80 uppercase tracking-wider">Fruits & Veggies Suggestions</p>
+                    <ul className="list-disc list-inside text-xs text-rose-800 space-y-1 font-bold pl-1">
                       {groceryList.fruitsAndVegetables.slice(0, 3).map(item => (
                         <li key={item} className="capitalize">{item}</li>
                       ))}
@@ -323,8 +322,8 @@ export default function PlannerPage() {
 
             </div>
 
-            <div className="text-[10px] text-zinc-500 bg-zinc-950/30 border border-zinc-850 p-3 rounded-2xl leading-tight flex items-start space-x-1.5 shrink-0">
-              <Info size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+            <div className="text-[10px] text-pink-700 bg-pink-50 border border-pink-100 p-3 rounded-2xl leading-tight flex items-start space-x-1.5 shrink-0 font-bold">
+              <Info size={14} className="text-pink-500 shrink-0 mt-0.5" />
               <span>Shopping lists sync with your live pantry items and meal planner configurations automatically.</span>
             </div>
           </div>

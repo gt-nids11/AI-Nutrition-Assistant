@@ -44,31 +44,31 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="flex min-h-screen items-center justify-center bg-[#fff8f9] px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Decorative Blobs */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 rounded-full bg-teal-500/10 blur-3xl" />
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-pink-300/20 blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 rounded-full bg-rose-300/20 blur-3xl" />
 
-      <div className="w-full max-w-md space-y-8 bg-zinc-900/60 border border-zinc-800 p-8 rounded-3xl backdrop-blur-md relative z-10">
+      <div className="w-full max-w-md space-y-8 bg-white border border-pink-100 p-8 rounded-3xl backdrop-blur-md relative z-10 shadow-xl shadow-pink-100/10">
         
         {/* Header */}
         <div className="flex flex-col items-center">
-          <div className="p-3 bg-emerald-500 rounded-2xl text-zinc-950 mb-3 shadow-lg shadow-emerald-500/20">
+          <div className="p-3 bg-pink-500 rounded-2xl text-white mb-3 shadow-lg shadow-pink-500/20 animate-pulse">
             <Activity size={28} />
           </div>
-          <h2 className="mt-2 text-center text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+          <h2 className="mt-2 text-center text-3xl font-extrabold tracking-tight text-rose-955">
             Create an Account
           </h2>
-          <p className="mt-1 text-center text-sm text-zinc-400">
+          <p className="mt-1 text-center text-sm text-rose-700 font-semibold">
             Join NutriMate AI and start healthy habits
           </p>
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-4 font-semibold text-xs text-rose-750" onSubmit={handleSubmit}>
           
           {error && (
-            <div className="flex items-center space-x-2 text-sm text-red-400 bg-red-950/20 border border-red-900/30 p-4 rounded-xl">
+            <div className="flex items-center space-x-2 text-sm text-red-700 bg-red-50 border border-red-200 p-4 rounded-xl font-bold">
               <AlertCircle size={18} className="shrink-0" />
               <span>{error}</span>
             </div>
@@ -78,11 +78,11 @@ export default function RegisterPage() {
             
             {/* Name Field */}
             <div>
-              <label htmlFor="user-name" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
+              <label htmlFor="user-name" className="block uppercase tracking-wider mb-1 font-bold">
                 Full Name
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-400">
                   <User size={18} />
                 </span>
                 <input
@@ -92,7 +92,7 @@ export default function RegisterPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 pl-10 pr-3 text-sm text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 pl-10 pr-3 text-sm text-rose-955 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                   placeholder="John Doe"
                 />
               </div>
@@ -100,11 +100,11 @@ export default function RegisterPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email-address" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
+              <label htmlFor="email-address" className="block uppercase tracking-wider mb-1 font-bold">
                 Email Address
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-400">
                   <Mail size={18} />
                 </span>
                 <input
@@ -114,7 +114,7 @@ export default function RegisterPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 pl-10 pr-3 text-sm text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 pl-10 pr-3 text-sm text-rose-955 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                   placeholder="name@example.com"
                 />
               </div>
@@ -122,11 +122,11 @@ export default function RegisterPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
+              <label htmlFor="password" className="block uppercase tracking-wider mb-1 font-bold">
                 Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-400">
                   <Lock size={18} />
                 </span>
                 <input
@@ -136,7 +136,7 @@ export default function RegisterPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 pl-10 pr-3 text-sm text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 pl-10 pr-3 text-sm text-rose-955 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -144,11 +144,11 @@ export default function RegisterPage() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
+              <label htmlFor="confirmPassword" className="block uppercase tracking-wider mb-1 font-bold">
                 Confirm Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-400">
                   <Lock size={18} />
                 </span>
                 <input
@@ -158,7 +158,7 @@ export default function RegisterPage() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-3 pl-10 pr-3 text-sm text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 pl-10 pr-3 text-sm text-rose-955 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -171,7 +171,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative flex w-full justify-center rounded-xl bg-emerald-600 py-3 px-4 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all disabled:opacity-50"
+              className="group relative flex w-full justify-center rounded-xl bg-pink-500 py-3 px-4 text-sm font-bold text-white hover:bg-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-pink-50 transition-all disabled:opacity-50 shadow-md shadow-pink-500/10"
             >
               {loading ? (
                 <Loader size={18} className="animate-spin" />
@@ -185,9 +185,9 @@ export default function RegisterPage() {
 
         {/* Footer Link */}
         <div className="text-center mt-4">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-rose-700 font-semibold">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
+            <Link href="/login" className="font-extrabold text-pink-600 hover:text-pink-750 transition-colors">
               Sign In
             </Link>
           </p>

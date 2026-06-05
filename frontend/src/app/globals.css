@@ -1,16 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Virgil";
+  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw/dist/fonts/Virgil.woff2") format("woff2");
+  font-display: swap;
+}
+
 :root {
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  --background: #fff5f6; /* Soft pastel pink */
+  --foreground: #471921; /* Deep rose-charcoal */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif !important;
 }
 
-/* Custom Scrollbars for premium scroll feel */
+/* Custom Scrollbars in soft rose tones */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -21,12 +28,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #fbcfe8; /* pink-200 */
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #f472b6; /* pink-400 */
 }
 
 /* Fade-in animations */

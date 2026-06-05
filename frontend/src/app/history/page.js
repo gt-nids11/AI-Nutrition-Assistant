@@ -9,7 +9,6 @@ import {
   Utensils, 
   Scale, 
   Flame,
-  Info,
   Loader
 } from 'lucide-react';
 
@@ -83,9 +82,9 @@ export default function HistoryPage() {
   const renderTrendChart = () => {
     if (summaries.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center h-48 bg-zinc-950/20 rounded-2xl border border-zinc-800/50">
-          <TrendingUp size={24} className="text-zinc-650 mb-2" />
-          <p className="text-xs text-zinc-550">No logs in this duration yet.</p>
+        <div className="flex flex-col items-center justify-center h-48 bg-pink-50/20 rounded-2xl border border-pink-100">
+          <TrendingUp size={24} className="text-pink-300 mb-2" />
+          <p className="text-xs text-rose-500/80">No logs in this duration yet.</p>
         </div>
       );
     }
@@ -118,13 +117,13 @@ export default function HistoryPage() {
         <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full min-w-[550px] overflow-visible">
           <defs>
             <linearGradient id="historyGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#ec4899" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.0" />
             </linearGradient>
           </defs>
 
           {/* Grid lines */}
-          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#27272a" strokeWidth={1} />
+          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#fbcfe8" strokeWidth={1} />
           
           {/* Target Baseline */}
           <line 
@@ -132,11 +131,11 @@ export default function HistoryPage() {
             y1={targetY} 
             x2={chartWidth - padding} 
             y2={targetY} 
-            stroke="#ef4444" 
+            stroke="#f43f5e" 
             strokeWidth={1} 
             strokeDasharray="4,4" 
           />
-          <text x={chartWidth - padding - 60} y={targetY - 5} fill="#ef4444" fontSize={8} className="font-semibold">
+          <text x={chartWidth - padding - 60} y={targetY - 5} fill="#f43f5e" fontSize={8} className="font-extrabold">
             Target: {calorieTarget} kcal
           </text>
 
@@ -144,20 +143,20 @@ export default function HistoryPage() {
           {areaPathData && <path d={areaPathData} fill="url(#historyGradient)" />}
 
           {/* Line Path */}
-          {pathData && <path d={pathData} fill="none" stroke="#10b981" strokeWidth={2} />}
+          {pathData && <path d={pathData} fill="none" stroke="#db2777" strokeWidth={2} />}
 
           {/* Data Nodes */}
           {points.map((p, idx) => (
             <g key={idx}>
-              <circle cx={p.x} cy={p.y} r={3} fill="#10b981" stroke="#09090b" strokeWidth={1} />
+              <circle cx={p.x} cy={p.y} r={3} fill="#ec4899" stroke="#ffffff" strokeWidth={1} />
               
               {/* Show text values on nodes for week, hide/reduce for month to keep clean */}
               {(filter === 'week' || idx % 3 === 0) && (
                 <>
-                  <text x={p.x} y={p.y - 8} fill="#a1a1aa" fontSize={7} textAnchor="middle">
+                  <text x={p.x} y={p.y - 8} fill="#881337" fontSize={7} textAnchor="middle" className="font-bold">
                     {p.val}
                   </text>
-                  <text x={p.x} y={chartHeight - padding + 12} fill="#71717a" fontSize={7} textAnchor="middle">
+                  <text x={p.x} y={chartHeight - padding + 12} fill="#9f1239" fontSize={7} textAnchor="middle" className="font-bold">
                     {p.date}
                   </text>
                 </>
@@ -176,17 +175,17 @@ export default function HistoryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Meal History</h1>
-          <p className="text-sm text-zinc-400">Review your past calorie logs and historical nutritional reports.</p>
+          <p className="text-sm text-rose-700 font-semibold">Review your past calorie logs and historical nutritional reports.</p>
         </div>
         
         {/* Toggle controls */}
-        <div className="flex bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden self-start sm:self-auto shrink-0 p-1">
+        <div className="flex bg-white border border-pink-100 rounded-xl overflow-hidden self-start sm:self-auto shrink-0 p-1 shadow-sm">
           <button
             onClick={() => setFilter('week')}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all
               ${filter === 'week' 
-                ? 'bg-emerald-600 text-white shadow-md' 
-                : 'text-zinc-500 hover:text-zinc-350'}`}
+                ? 'bg-pink-500 text-white shadow-md shadow-pink-500/10' 
+                : 'text-rose-500 hover:text-rose-700'}`}
           >
             Last 7 Days
           </button>
@@ -194,8 +193,8 @@ export default function HistoryPage() {
             onClick={() => setFilter('month')}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all
               ${filter === 'month' 
-                ? 'bg-emerald-600 text-white shadow-md' 
-                : 'text-zinc-500 hover:text-zinc-350'}`}
+                ? 'bg-pink-500 text-white shadow-md shadow-pink-500/10' 
+                : 'text-rose-500 hover:text-rose-700'}`}
           >
             Last 30 Days
           </button>
@@ -204,7 +203,7 @@ export default function HistoryPage() {
 
       {loading ? (
         <div className="flex h-48 items-center justify-center">
-          <Loader className="animate-spin text-emerald-500" size={32} />
+          <Loader className="animate-spin text-pink-500" size={32} />
         </div>
       ) : (
         <div className="space-y-6">
@@ -212,21 +211,21 @@ export default function HistoryPage() {
           {/* Dashboard Averages Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Avg Calories', val: averages.calories, unit: 'kcal', icon: Flame, text: 'text-orange-500' },
-              { label: 'Avg Protein', val: averages.protein, unit: 'g', icon: Scale, text: 'text-indigo-400' },
-              { label: 'Avg Carbs', val: averages.carbs, unit: 'g', icon: Utensils, text: 'text-emerald-400' },
-              { label: 'Avg Fat', val: averages.fat, unit: 'g', icon: Scale, text: 'text-amber-500' }
+              { label: 'Avg Calories', val: averages.calories, unit: 'kcal', icon: Flame, text: 'text-pink-550' },
+              { label: 'Avg Protein', val: averages.protein, unit: 'g', icon: Scale, text: 'text-rose-400' },
+              { label: 'Avg Carbs', val: averages.carbs, unit: 'g', icon: Utensils, text: 'text-pink-400' },
+              { label: 'Avg Fat', val: averages.fat, unit: 'g', icon: Scale, text: 'text-pink-300' }
             ].map(card => {
               const Icon = card.icon;
               return (
-                <div key={card.label} className="bg-zinc-900/40 border border-zinc-850 p-5 rounded-2xl flex flex-col justify-between h-28 relative overflow-hidden">
-                  <div className="flex justify-between items-center text-zinc-500 shrink-0">
+                <div key={card.label} className="bg-white border border-pink-100 p-5 rounded-2xl flex flex-col justify-between h-28 relative overflow-hidden shadow-sm shadow-pink-100/10">
+                  <div className="flex justify-between items-center text-rose-500/80 shrink-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider">{card.label}</span>
                     <Icon size={16} className={card.text} />
                   </div>
                   <div className="mt-2 shrink-0">
-                    <span className="text-2xl font-black text-white">{card.val}</span>
-                    <span className="text-xs text-zinc-500 ml-1">{card.unit}</span>
+                    <span className="text-2xl font-black text-rose-955">{card.val}</span>
+                    <span className="text-xs text-rose-600/80 ml-1">{card.unit}</span>
                   </div>
                 </div>
               );
@@ -234,49 +233,49 @@ export default function HistoryPage() {
           </div>
 
           {/* Calorie trend chart wrapper */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5">
-              <TrendingUp size={14} className="text-emerald-400" />
+          <div className="bg-white border border-pink-100 rounded-3xl p-6 space-y-4 shadow-sm shadow-pink-100/10">
+            <h3 className="text-sm font-bold text-rose-650 uppercase tracking-widest flex items-center space-x-1.5">
+              <TrendingUp size={14} className="text-pink-500" />
               <span>Caloric Progress Graph</span>
             </h3>
             {renderTrendChart()}
           </div>
 
           {/* Historical Eaten Lists */}
-          <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 space-y-5">
-            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5">
-              <History size={14} className="text-emerald-400" />
+          <div className="bg-white border border-pink-100 rounded-3xl p-6 space-y-5 shadow-sm shadow-pink-100/10">
+            <h3 className="text-sm font-bold text-rose-650 uppercase tracking-widest flex items-center space-x-1.5">
+              <History size={14} className="text-pink-500" />
               <span>Meal History Log</span>
             </h3>
 
             {dates.length === 0 ? (
-              <div className="text-center py-8 text-zinc-500 text-xs">
+              <div className="text-center py-8 text-rose-550 text-xs font-semibold">
                 <span>No logged entries in this range.</span>
               </div>
             ) : (
               <div className="space-y-6">
                 {dates.map(dateStr => (
                   <div key={dateStr} className="space-y-2.5">
-                    <div className="flex items-center space-x-2 py-1.5 border-b border-zinc-800/80 shrink-0">
-                      <Calendar size={14} className="text-emerald-400" />
-                      <span className="text-xs font-black text-zinc-350">{dateStr}</span>
+                    <div className="flex items-center space-x-2 py-1.5 border-b border-pink-50 shrink-0">
+                      <Calendar size={14} className="text-pink-500" />
+                      <span className="text-xs font-bold text-rose-950">{dateStr}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-1">
                       {mealGroups[dateStr].map(meal => (
-                        <div key={meal._id} className="bg-zinc-950/40 border border-zinc-850 p-4 rounded-xl flex justify-between items-center text-xs">
+                        <div key={meal._id} className="bg-pink-50/20 border border-pink-100/70 p-4 rounded-xl flex justify-between items-center text-xs font-semibold">
                           <div>
                             <div className="flex items-center space-x-1.5">
-                              <span className="font-bold text-zinc-200 capitalize">{meal.foodName}</span>
-                              <span className="text-[8px] px-1.5 py-0.5 rounded-full border border-emerald-950 bg-emerald-950/20 text-emerald-400 font-bold capitalize">
+                              <span className="font-extrabold text-rose-950 capitalize">{meal.foodName}</span>
+                              <span className="text-[8px] px-1.5 py-0.5 rounded-full border border-pink-200 bg-pink-100 text-pink-700 font-bold capitalize">
                                 {meal.mealType}
                               </span>
                             </div>
-                            <p className="text-[9px] text-zinc-500 mt-1">
+                            <p className="text-[9px] text-rose-600/80 mt-1 font-bold">
                               P: {meal.protein}g | C: {meal.carbs}g | F: {meal.fat}g | Fib: {meal.fiber}g
                             </p>
                           </div>
-                          <span className="font-bold text-zinc-200 shrink-0 ml-4">{meal.calories} kcal</span>
+                          <span className="font-extrabold text-rose-950 shrink-0 ml-4">{meal.calories} kcal</span>
                         </div>
                       ))}
                     </div>
