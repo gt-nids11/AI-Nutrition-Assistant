@@ -2,13 +2,16 @@
 
 @theme {
   --font-sans: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
+  --font-serif: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
+  --font-mono: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
 }
 
 @font-face {
   font-family: "Virgil";
-  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw/dist/fonts/Virgil.woff2") format("woff2");
+  src: url("/fonts/Virgil.woff2") format("woff2");
   font-display: swap;
 }
+
 
 :root {
   --background: #fff5f6; /* Soft pastel pink */
