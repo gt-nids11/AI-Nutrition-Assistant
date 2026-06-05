@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { logMeal, deleteMeal, getDailySummary, updateWaterIntake, getMealHistory } = require('../controllers/trackerController');
+const { logMeal, deleteMeal, getDailySummary, updateWaterIntake, getMealHistory, getNutritionLookup } = require('../controllers/trackerController');
 const { protect } = require('../middleware/auth');
 
 router.use(protect);
@@ -10,5 +10,7 @@ router.delete('/meal/:id', deleteMeal);
 router.get('/daily/:date', getDailySummary);
 router.post('/water', updateWaterIntake);
 router.get('/history', getMealHistory);
+router.get('/nutrition-lookup', getNutritionLookup);
 
 module.exports = router;
+

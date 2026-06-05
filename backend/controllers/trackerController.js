@@ -267,3 +267,30 @@ exports.getMealHistory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// @desc    Lookup nutritional values for a query without logging
+// @route   GET /api/tracker/nutrition-lookup
+// @access  Private
+exports.getNutritionLookup = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ success: false, message: 'Please provide a food query' });
+    }
+
+    const profile = await UserProfile.findOne({ user: req.user.id });
+    const customKeyConfig = profile ? profile.customApiKey : null;
+
+    const foodDetails = await aiService.analyzeMealLog(query, customKeyConfig);
+
+    res.json({
+      success: true,
+      query,
+      nutrition: foodDetails
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

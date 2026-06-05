@@ -86,7 +86,10 @@ export const trackerAPI = {
     apiCall('/tracker/water', { method: 'POST', body: { amount, date: dateStr } }),
   getHistory: (filter) => 
     apiCall(`/tracker/history?filter=${filter}`, { method: 'GET' }),
+  getNutritionLookup: (query) => 
+    apiCall(`/tracker/nutrition-lookup?query=${encodeURIComponent(query)}`, { method: 'GET' }),
 };
+
 
 export const chatAPI = {
   getHistory: () => 
