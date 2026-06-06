@@ -37,6 +37,11 @@ export default function TrackerPage() {
   const [manualFib, setManualFib] = useState('');
   const [manualSubmitting, setManualSubmitting] = useState(false);
 
+  // Expanded / Serving size custom states
+  const [expandedMeals, setExpandedMeals] = useState({});
+  const [customGramsValues, setCustomGramsValues] = useState({});
+  const [customGramsActive, setCustomGramsActive] = useState({});
+
   // Message updates
   const [logSuccessMessage, setLogSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -150,6 +155,53 @@ export default function TrackerPage() {
     }
   };
 
+  const toggleMealExpand = (id) => {
+    setExpandedMeals(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleServingSizeChange = async (mealId, value) => {
+    if (value === 'custom') {
+      setCustomGramsActive(prev => ({ ...prev, [mealId]: true }));
+      const meal = meals.find(m => m._id === mealId);
+      const initialGrams = meal.customGrams || (meal.ingredients && meal.ingredients.reduce((acc, ing) => acc + (ing.baseGrams || ing.grams || 100), 0)) || 150;
+      setCustomGramsValues(prev => ({ ...prev, [mealId]: initialGrams }));
+      return;
+    }
+
+    setCustomGramsActive(prev => ({ ...prev, [mealId]: false }));
+
+    try {
+      const res = await trackerAPI.updateMeal(mealId, { servingSizeMultiplier: Number(value) });
+      if (res.success) {
+        setMeals(meals.map(m => m._id === mealId ? res.mealLog : m));
+        setSummary(res.summary);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Failed to update serving size');
+    }
+  };
+
+  const handleCustomGramsInput = (mealId, value) => {
+    setCustomGramsValues(prev => ({ ...prev, [mealId]: value }));
+  };
+
+  const saveCustomGrams = async (mealId) => {
+    const val = customGramsValues[mealId];
+    if (!val || isNaN(val) || val <= 0) return;
+
+    try {
+      const res = await trackerAPI.updateMeal(mealId, { customGrams: Number(val) });
+      if (res.success) {
+        setMeals(meals.map(m => m._id === mealId ? res.mealLog : m));
+        setSummary(res.summary);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Failed to update custom weight');
+    }
+  };
+
   return (
     <div className="space-y-6">
       
@@ -157,24 +209,24 @@ export default function TrackerPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Log & Track Nutrition</h1>
-          <p className="text-sm text-rose-700 font-semibold">Keep account of your daily calorie targets and nutrient splits.</p>
+          <p className="text-sm text-zinc-500 font-medium">Keep account of your daily calorie targets and nutrient splits.</p>
         </div>
         
         {/* Date Selector */}
-        <div className="flex items-center bg-white border border-pink-100 rounded-xl overflow-hidden self-start sm:self-auto shrink-0 shadow-sm">
+        <div className="flex items-center bg-white border border-zinc-100 rounded-xl overflow-hidden self-start sm:self-auto shrink-0 shadow-sm">
           <button 
             onClick={() => handleDateChange(-1)}
-            className="p-3 hover:bg-pink-50 text-pink-600 hover:text-pink-900 transition-colors"
+            className="p-3 hover:bg-zinc-50 text-pink-600 hover:text-pink-900 transition-colors"
           >
             <ChevronLeft size={16} />
           </button>
-          <div className="px-4 py-2 text-xs font-extrabold text-rose-950 flex items-center space-x-1.5">
+          <div className="px-4 py-2 text-xs font-extrabold text-zinc-950 flex items-center space-x-1.5">
             <Calendar size={14} className="text-pink-500" />
             <span>{new Date(date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
           </div>
           <button 
             onClick={() => handleDateChange(1)}
-            className="p-3 hover:bg-pink-50 text-pink-650 hover:text-pink-900 transition-colors"
+            className="p-3 hover:bg-zinc-50 text-pink-600 hover:text-pink-900 transition-colors"
           >
             <ChevronRight size={16} />
           </button>
@@ -187,14 +239,14 @@ export default function TrackerPage() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Form tab selector */}
-          <div className="bg-white border border-pink-100 p-6 rounded-3xl space-y-6 shadow-sm shadow-pink-100/10">
-            <div className="flex space-x-2 border-b border-pink-50 pb-4">
+          <div className="bg-white border border-zinc-100 p-6 rounded-3xl space-y-6 shadow-sm">
+            <div className="flex space-x-2 border-b border-zinc-100 pb-4">
               <button
                 onClick={() => { setActiveTab('ai'); setErrorMessage(''); }}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all
                   ${activeTab === 'ai' 
-                    ? 'bg-pink-500/10 border border-pink-500/20 text-pink-650' 
-                    : 'text-rose-450 hover:text-rose-700 border border-transparent'}`}
+                    ? 'bg-pink-500/10 border border-pink-500/20 text-pink-600' 
+                    : 'text-zinc-400 hover:text-zinc-700 border border-transparent'}`}
               >
                 <Sparkles size={14} />
                 <span>Log with Copilot AI</span>
@@ -203,8 +255,8 @@ export default function TrackerPage() {
                 onClick={() => { setActiveTab('manual'); setErrorMessage(''); }}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all
                   ${activeTab === 'manual' 
-                    ? 'bg-pink-500/10 border border-pink-500/20 text-pink-650' 
-                    : 'text-rose-455 hover:text-rose-700 border border-transparent'}`}
+                    ? 'bg-pink-500/10 border border-pink-500/20 text-pink-600' 
+                    : 'text-zinc-400 hover:text-zinc-700 border border-transparent'}`}
               >
                 <ClipboardList size={14} />
                 <span>Log manually</span>
@@ -227,7 +279,7 @@ export default function TrackerPage() {
 
             {/* Meal Type selection */}
             <div>
-              <label className="block text-xs font-bold text-rose-700 uppercase tracking-wider mb-2">Select Meal Category</label>
+              <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Select Meal Category</label>
               <div className="grid grid-cols-4 gap-2">
                 {['breakfast', 'lunch', 'dinner', 'snack'].map(type => (
                   <button
@@ -236,8 +288,8 @@ export default function TrackerPage() {
                     onClick={() => setMealType(type)}
                     className={`py-2 rounded-xl border text-xs font-bold capitalize transition-all
                       ${mealType === type 
-                        ? 'border-pink-500 bg-pink-500/10 text-pink-650' 
-                        : 'border-pink-100 bg-pink-50/10 text-rose-500 hover:border-pink-200 hover:text-rose-750'}`}
+                        ? 'border-pink-500 bg-pink-500/10 text-pink-600' 
+                        : 'border-zinc-200 bg-zinc-50/10 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700'}`}
                   >
                     {type}
                   </button>
@@ -245,31 +297,29 @@ export default function TrackerPage() {
               </div>
             </div>
 
-            {/* ======================================= */}
             {/* AI NATURAL LANGUAGE FORM */}
-            {/* ======================================= */}
             {activeTab === 'ai' && (
-              <form onSubmit={handleAiLog} className="space-y-4 font-semibold text-xs text-rose-750">
+              <form onSubmit={handleAiLog} className="space-y-4 font-semibold text-xs text-zinc-650">
                 <div>
-                  <label className="block uppercase tracking-wider mb-2 font-bold">Describe what you ate</label>
+                  <label className="block uppercase tracking-wider mb-2 font-extrabold text-zinc-500">Describe what you ate</label>
                   <textarea
                     rows={3}
-                    placeholder="e.g. I had two boiled eggs, one slice of whole wheat toast, and a glass of milk."
+                    placeholder="e.g. I had pesto pasta."
                     value={mealText}
                     onChange={(e) => setMealText(e.target.value)}
-                    className="w-full bg-pink-50/10 border border-pink-100 rounded-xl p-3.5 text-sm text-rose-950 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all placeholder-rose-300 resize-none"
+                    className="w-full bg-zinc-50/10 border border-zinc-200 rounded-xl p-3.5 text-sm text-zinc-900 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all placeholder-zinc-400 resize-none"
                     required
                   />
-                  <p className="text-[10px] text-rose-500 mt-1 flex items-center space-x-1 font-bold">
+                  <p className="text-[10px] text-zinc-400 mt-1 flex items-center space-x-1 font-bold">
                     <Info size={12} className="text-pink-500" />
-                    <span>The AI estimates calories, protein, carbs, fats, and fiber automatically.</span>
+                    <span>The AI estimates ingredients, serving sizes, and confidence levels.</span>
                   </p>
                 </div>
 
                 <button
                   type="submit"
                   disabled={aiSubmitting}
-                  className="w-full py-3.5 bg-pink-500 hover:bg-pink-400 text-white font-extrabold text-sm rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-2 shadow-lg shadow-pink-500/10"
+                  className="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-extrabold text-sm rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-2 shadow-lg shadow-pink-500/10"
                 >
                   {aiSubmitting ? (
                     <Loader size={18} className="animate-spin" />
@@ -283,31 +333,29 @@ export default function TrackerPage() {
               </form>
             )}
 
-            {/* ======================================= */}
             {/* MANUAL FORM ENTRY */}
-            {/* ======================================= */}
             {activeTab === 'manual' && (
-              <form onSubmit={handleManualLog} className="space-y-4 font-semibold text-xs text-rose-750">
+              <form onSubmit={handleManualLog} className="space-y-4 font-semibold text-xs text-zinc-650">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block uppercase tracking-wider mb-1.5 font-bold">Food/Dish Name</label>
+                    <label className="block uppercase tracking-wider mb-1.5 font-extrabold text-zinc-500">Food/Dish Name</label>
                     <input
                       type="text"
                       placeholder="e.g. Scrambled Eggs with Bread"
                       value={manualName}
                       onChange={(e) => setManualName(e.target.value)}
-                      className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                      className="block w-full rounded-xl border border-zinc-200 bg-zinc-50/10 py-3 px-3.5 text-sm text-zinc-950 placeholder-zinc-400 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block uppercase tracking-wider mb-1.5 font-bold">Calories (kcal)</label>
+                    <label className="block uppercase tracking-wider mb-1.5 font-extrabold text-zinc-500">Calories (kcal)</label>
                     <input
                       type="number"
                       placeholder="e.g. 320"
                       value={manualCal}
                       onChange={(e) => setManualCal(e.target.value)}
-                      className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 placeholder-rose-300 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                      className="block w-full rounded-xl border border-zinc-200 bg-zinc-50/10 py-3 px-3.5 text-sm text-zinc-955 placeholder-zinc-400 font-semibold focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                       required
                     />
                   </div>
@@ -315,43 +363,43 @@ export default function TrackerPage() {
                   {/* Macros grid */}
                   <div className="md:col-span-2 grid grid-cols-4 gap-2">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase mb-1">Protein (g)</label>
+                      <label className="block text-[10px] font-extrabold uppercase mb-1 text-zinc-450">Protein (g)</label>
                       <input
                         type="number"
                         placeholder="0"
                         value={manualProt}
                         onChange={(e) => setManualProt(e.target.value)}
-                        className="w-full text-center rounded-lg border border-pink-100 bg-pink-50/10 py-2.5 px-2 text-xs text-rose-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                        className="w-full text-center rounded-lg border border-zinc-200 bg-zinc-50/10 py-2.5 px-2 text-xs text-zinc-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase mb-1">Carbs (g)</label>
+                      <label className="block text-[10px] font-extrabold uppercase mb-1 text-zinc-450">Carbs (g)</label>
                       <input
                         type="number"
                         placeholder="0"
                         value={manualCarb}
                         onChange={(e) => setManualCarb(e.target.value)}
-                        className="w-full text-center rounded-lg border border-pink-100 bg-pink-50/10 py-2.5 px-2 text-xs text-rose-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                        className="w-full text-center rounded-lg border border-zinc-200 bg-zinc-50/10 py-2.5 px-2 text-xs text-zinc-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase mb-1">Fat (g)</label>
+                      <label className="block text-[10px] font-extrabold uppercase mb-1 text-zinc-450">Fat (g)</label>
                       <input
                         type="number"
                         placeholder="0"
                         value={manualFat}
                         onChange={(e) => setManualFat(e.target.value)}
-                        className="w-full text-center rounded-lg border border-pink-100 bg-pink-50/10 py-2.5 px-2 text-xs text-rose-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                        className="w-full text-center rounded-lg border border-zinc-200 bg-zinc-50/10 py-2.5 px-2 text-xs text-zinc-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase mb-1">Fiber (g)</label>
+                      <label className="block text-[10px] font-extrabold uppercase mb-1 text-zinc-450">Fiber (g)</label>
                       <input
                         type="number"
                         placeholder="0"
                         value={manualFib}
                         onChange={(e) => setManualFib(e.target.value)}
-                        className="w-full text-center rounded-lg border border-pink-100 bg-pink-50/10 py-2.5 px-2 text-xs text-rose-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                        className="w-full text-center rounded-lg border border-zinc-200 bg-zinc-50/10 py-2.5 px-2 text-xs text-zinc-950 focus:border-pink-500 focus:outline-none transition-all font-semibold"
                       />
                     </div>
                   </div>
@@ -360,7 +408,7 @@ export default function TrackerPage() {
                 <button
                   type="submit"
                   disabled={manualSubmitting}
-                  className="w-full py-3.5 bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-700 font-extrabold text-sm rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-1.5 shadow-md mt-2"
+                  className="w-full py-3.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-250 text-zinc-700 font-extrabold text-sm rounded-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-1.5 shadow-md mt-2"
                 >
                   {manualSubmitting ? (
                     <Loader size={18} className="animate-spin" />
@@ -377,8 +425,8 @@ export default function TrackerPage() {
           </div>
 
           {/* Eaten Meal checklist */}
-          <div className="bg-white border border-pink-100 p-6 rounded-3xl space-y-4 shadow-sm shadow-pink-100/10">
-            <h3 className="text-sm font-bold text-rose-700 uppercase tracking-widest flex items-center space-x-1.5 border-b border-pink-50 pb-2">
+          <div className="bg-white border border-zinc-100 p-6 rounded-3xl space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-zinc-700 uppercase tracking-widest flex items-center space-x-1.5 border-b border-zinc-100 pb-2">
               <ClipboardList size={14} className="text-pink-500" />
               <span>Logged Foods Checklist</span>
             </h3>
@@ -388,39 +436,113 @@ export default function TrackerPage() {
                 <Loader className="animate-spin text-pink-500" size={24} />
               </div>
             ) : meals.length === 0 ? (
-              <div className="py-8 text-center text-rose-500 text-xs font-semibold flex flex-col items-center">
+              <div className="py-8 text-center text-zinc-400 text-xs font-semibold flex flex-col items-center">
                 <span>No meals logged for this date.</span>
               </div>
             ) : (
-              <div className="divide-y divide-pink-50 max-h-[350px] overflow-y-auto pr-1">
-                {meals.map((meal) => (
-                  <div key={meal._id} className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0">
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-extrabold text-sm text-rose-950 capitalize">{meal.foodName}</span>
-                        <span className="px-2 py-0.5 rounded-full text-[8px] font-bold border border-pink-200 bg-pink-100 text-pink-700 capitalize">
-                          {meal.mealType}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-rose-600 font-semibold">
-                        P: {meal.protein}g | C: {meal.carbs}g | F: {meal.fat}g | Fib: {meal.fiber}g
-                      </p>
-                    </div>
+              <div className="divide-y divide-zinc-100 max-h-[480px] overflow-y-auto pr-1">
+                {meals.map((meal) => {
+                  const hasCustom = customGramsActive[meal._id] || meal.customGrams;
+                  const score = meal.confidenceScore || 'medium';
+                  const badgeColor = score === 'high' 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
+                    : score === 'medium'
+                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-600'
+                    : 'bg-rose-500/10 border-rose-500/20 text-rose-600';
 
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <p className="font-extrabold text-sm text-rose-950">{meal.calories} kcal</p>
+                  return (
+                    <div key={meal._id} className="py-4 first:pt-0 last:pb-0 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                            <span className="font-extrabold text-sm text-zinc-950 capitalize">{meal.foodName}</span>
+                            <span className="px-1.5 py-0.5 rounded-full text-[8px] font-bold border border-pink-200 bg-pink-100 text-pink-700 capitalize">
+                              {meal.mealType}
+                            </span>
+                            <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-bold border capitalize ${badgeColor}`}>
+                              Confidence: {score}
+                            </span>
+                          </div>
+                          
+                          {meal.assumptions && (
+                            <p className="text-[10px] text-zinc-400 font-semibold italic leading-tight">
+                              Assumed: {meal.assumptions.replace(/\n/g, ', ')}
+                            </p>
+                          )}
+
+                          {/* Serving Multiplier Selector */}
+                          <div className="flex items-center space-x-2 pt-1">
+                            <label className="text-[10px] text-zinc-450 font-bold">Serving:</label>
+                            <select
+                              value={hasCustom ? 'custom' : meal.servingSizeMultiplier}
+                              onChange={(e) => handleServingSizeChange(meal._id, e.target.value)}
+                              className="bg-zinc-50 border border-zinc-200 rounded-lg p-1 text-[10px] font-bold text-zinc-700 focus:outline-none"
+                            >
+                              <option value={0.5}>0.5x Portion</option>
+                              <option value={1}>1.0x Portion</option>
+                              <option value={1.5}>1.5x Portion</option>
+                              <option value={2}>2.0x Portion</option>
+                              <option value="custom">Custom Weight (g)</option>
+                            </select>
+                            
+                            {hasCustom && (
+                              <div className="flex items-center space-x-1">
+                                <input
+                                  type="number"
+                                  placeholder="Grams"
+                                  value={customGramsValues[meal._id] !== undefined ? customGramsValues[meal._id] : (meal.customGrams || '')}
+                                  onChange={(e) => handleCustomGramsInput(meal._id, e.target.value)}
+                                  onBlur={() => saveCustomGrams(meal._id)}
+                                  className="w-16 bg-zinc-50 border border-zinc-200 rounded-lg p-1 text-[10px] font-bold text-center text-zinc-900 focus:outline-none"
+                                />
+                                <span className="text-[10px] text-zinc-400 font-bold">g</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-3 text-zinc-900">
+                          <div className="text-right">
+                            <p className="font-extrabold text-sm text-zinc-950">{meal.calories} kcal</p>
+                            <p className="text-[9px] text-zinc-500 font-semibold">
+                              P:{meal.protein}g C:{meal.carbs}g F:{meal.fat}g
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteMeal(meal._id)}
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-red-650 hover:bg-red-50 transition-all"
+                            title="Delete entry"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => handleDeleteMeal(meal._id)}
-                        className="p-1.5 rounded-lg text-rose-400 hover:text-red-650 hover:bg-red-50 transition-all"
-                        title="Delete entry"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+
+                      {/* Ingredients list breakdown */}
+                      {meal.ingredients && meal.ingredients.length > 0 && (
+                        <div className="pl-1">
+                          <button
+                            onClick={() => toggleMealExpand(meal._id)}
+                            className="text-[10px] text-pink-600 hover:text-pink-700 font-bold flex items-center"
+                          >
+                            {expandedMeals[meal._id] ? 'Hide ingredients list [-]' : 'Show ingredients list [+]'}
+                          </button>
+                          
+                          {expandedMeals[meal._id] && (
+                            <div className="mt-1.5 p-2.5 bg-zinc-50/50 rounded-xl space-y-1.5 border border-zinc-100">
+                              {meal.ingredients.map((ing, idx) => (
+                                <div key={idx} className="flex justify-between items-center text-[10px] text-zinc-500 font-semibold">
+                                  <span className="capitalize">{ing.grams}g {ing.name}</span>
+                                  <span>{ing.calories} kcal (P: {ing.protein}g | C: {ing.carbs}g | F: {ing.fat}g)</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -431,20 +553,19 @@ export default function TrackerPage() {
         <div className="space-y-6">
           
           {/* Calorie Card mini summary */}
-          <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-sm shadow-pink-100/10">
-            <div className="text-xs font-bold text-rose-700 uppercase tracking-widest flex items-center space-x-1.5 mb-4">
-              <Flame size={14} className="text-pink-550" />
+          <div className="bg-white border border-zinc-100 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-sm">
+            <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5 mb-4">
+              <Flame size={14} className="text-pink-500" />
               <span>Calorie Summary</span>
             </div>
 
             <div className="w-32 h-32 relative flex items-center justify-center">
-              {/* Circular mini progress */}
               <svg className="w-full h-full transform -rotate-90">
                 <circle
                   cx="64"
                   cy="64"
                   r="45"
-                  className="stroke-pink-50 fill-none"
+                  className="stroke-zinc-100 fill-none"
                   strokeWidth="8"
                 />
                 <circle
@@ -459,47 +580,49 @@ export default function TrackerPage() {
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-2xl font-black text-rose-950">{summary?.totalCalories || 0}</span>
-                <span className="text-[9px] uppercase font-bold text-rose-500/80 tracking-wider">kcal</span>
+                <span className="text-2xl font-black text-zinc-950">{summary?.totalCalories || 0}</span>
+                <span className="text-[9px] uppercase font-bold text-zinc-450 tracking-wider">kcal</span>
               </div>
             </div>
 
-            <div className="w-full text-xs space-y-2.5 mt-5 border-t border-pink-105 pt-4 text-rose-800 font-semibold">
+            <div className="w-full text-xs space-y-2.5 mt-5 border-t border-zinc-100 pt-4 text-zinc-700 font-semibold">
               <div className="flex justify-between">
                 <span>Logged Calories:</span>
-                <span className="font-extrabold text-rose-950">{summary?.totalCalories || 0} kcal</span>
+                <span className="font-extrabold text-zinc-950">{summary?.totalCalories || 0} kcal</span>
               </div>
               <div className="flex justify-between">
                 <span>Remaining Target:</span>
-                <span className="font-extrabold text-pink-600">{Math.max(0, (summary?.calorieTarget || 2000) - (summary?.totalCalories || 0))} kcal</span>
+                <span className={`font-extrabold ${((summary?.calorieTarget || 2000) - (summary?.totalCalories || 0)) >= 0 ? 'text-pink-600' : 'text-rose-500'}`}>
+                  {(summary?.calorieTarget || 2000) - (summary?.totalCalories || 0)} kcal
+                </span>
               </div>
             </div>
           </div>
 
           {/* Macros Card sidebar summaries */}
-          <div className="bg-white border border-pink-100 rounded-3xl p-6 shadow-sm shadow-pink-100/10">
-            <div className="text-xs font-bold text-rose-700 uppercase tracking-widest flex items-center space-x-1.5 mb-4">
+          <div className="bg-white border border-zinc-100 rounded-3xl p-6 shadow-sm">
+            <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5 mb-4">
               <Scale size={14} className="text-pink-500" />
               <span>Macronutrient Targets</span>
             </div>
 
             <div className="space-y-4">
               {[
-                { name: 'Protein', consumed: summary?.totalProtein || 0, target: summary?.proteinTarget || 140, color: 'bg-rose-400' },
-                { name: 'Carbs', consumed: summary?.totalCarbs || 0, target: summary?.carbTarget || 220, color: 'bg-pink-400' },
-                { name: 'Fat', consumed: summary?.totalFat || 0, target: summary?.fatTarget || 65, color: 'bg-pink-300' },
-                { name: 'Fiber', consumed: summary?.totalFiber || 0, target: 30, color: 'bg-rose-350' }
+                { name: 'Protein', consumed: summary?.totalProtein || 0, target: summary?.proteinTarget || 140, color: 'bg-pink-500' },
+                { name: 'Carbs', consumed: summary?.totalCarbs || 0, target: summary?.carbTarget || 220, color: 'bg-emerald-500' },
+                { name: 'Fat', consumed: summary?.totalFat || 0, target: summary?.fatTarget || 65, color: 'bg-sky-500' },
+                { name: 'Fiber', consumed: summary?.totalFiber || 0, target: 30, color: 'bg-zinc-400' }
               ].map(macro => {
                 const pct = Math.min(100, Math.round((macro.consumed / macro.target) * 100));
                 return (
-                  <div key={macro.name} className="space-y-1">
+                  <div key={macro.name} className="space-y-1 text-zinc-900">
                     <div className="flex justify-between text-xs font-bold">
-                      <span className="text-rose-950">{macro.name}</span>
-                      <span className="text-rose-600/70">
-                        <strong className="text-rose-800">{macro.consumed}g</strong> / {macro.target}g
+                      <span>{macro.name}</span>
+                      <span className="text-zinc-500">
+                        <strong>{macro.consumed}g</strong> / {macro.target}g
                       </span>
                     </div>
-                    <div className="w-full bg-pink-50 h-2 rounded-full overflow-hidden border border-pink-200/20">
+                    <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                       <div className={`${macro.color} h-full rounded-full transition-all`} style={{ width: `${pct}%` }} />
                     </div>
                   </div>

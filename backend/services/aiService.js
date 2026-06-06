@@ -1,5 +1,5 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 const OpenAI = require('openai');
+const nutritionService = require('./nutritionService');
 
 // ==========================================
 // MOCK AI DATA & LOGIC (Robust Local Fallback)
@@ -134,7 +134,7 @@ const MOCK_RECIPES = [
 ];
 
 // Helper to parse natural language using mock system
-function mockParseMeal(text) {
+async function mockParseMeal(text) {
   const words = text.toLowerCase().split(/\s+/);
   let totalCalories = 0;
   let totalProtein = 0;
@@ -143,17 +143,13 @@ function mockParseMeal(text) {
   let totalFiber = 0;
   const itemsMatched = [];
 
-  // Parse numbers
   const numberWordMap = { one: 1, two: 2, three: 3, four: 4, five: 5, a: 1, an: 1 };
   let pendingQuantity = 1;
 
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
-
-    // Clean word
     const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
 
-    // Check if word is a number
     const num = parseInt(cleanWord, 10);
     if (!isNaN(num)) {
       pendingQuantity = num;
@@ -163,10 +159,13 @@ function mockParseMeal(text) {
       continue;
     }
 
-    // Try to match a food
     const matchedFood = MOCK_FOODS.find(f => {
-      return f.name === cleanWord || f.synonyms.includes(cleanWord) || 
-             f.name.includes(cleanWord) || f.synonyms.some(syn => syn.includes(cleanWord));
+      const exactMatch = f.name === cleanWord || f.synonyms.includes(cleanWord);
+      if (exactMatch) return true;
+      if (cleanWord.length > 2) {
+        return f.name.includes(cleanWord) || f.synonyms.some(syn => syn.includes(cleanWord));
+      }
+      return false;
     });
 
     if (matchedFood) {
@@ -176,12 +175,11 @@ function mockParseMeal(text) {
       totalCarbs += matchedFood.carbs * q;
       totalFat += matchedFood.fat * q;
       totalFiber += matchedFood.fiber * q;
-      itemsMatched.push(`${q}x ${matchedFood.name}`);
-      pendingQuantity = 1; // reset
+      itemsMatched.push({ name: matchedFood.name, grams: 100 * q, baseGrams: 100 });
+      pendingQuantity = 1;
     }
   }
 
-  // If absolutely nothing matched, generate a deterministic mock item based on text hash
   if (itemsMatched.length === 0) {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
@@ -193,16 +191,41 @@ function mockParseMeal(text) {
     totalCarbs = (absHash % 35) + 15;
     totalFat = (absHash % 10) + 3;
     totalFiber = (absHash % 5) + 1;
-    itemsMatched.push(text.trim());
+    itemsMatched.push({ name: text.trim(), grams: 150, baseGrams: 150 });
   }
 
+  const baseIngredients = await Promise.all(itemsMatched.map(async item => {
+    const lookup = await nutritionService.getIngredientNutrition(item.name) || { calories: 150, protein: 5, carbs: 20, fat: 3, fiber: 1 };
+    const mult = item.grams / 100;
+    return {
+      name: item.name,
+      baseGrams: item.baseGrams,
+      grams: item.grams,
+      calories: Math.round(lookup.calories * mult),
+      protein: Math.round(lookup.protein * mult),
+      carbs: Math.round(lookup.carbs * mult),
+      fat: Math.round(lookup.fat * mult),
+      fiber: Math.round(lookup.fiber * mult)
+    };
+  }));
+
   return {
-    foodName: itemsMatched.join(', '),
+    foodName: itemsMatched.map(item => item.name).join(', '),
     calories: Math.round(totalCalories),
     protein: Math.round(totalProtein),
     carbs: Math.round(totalCarbs),
     fat: Math.round(totalFat),
-    fiber: Math.round(totalFiber)
+    fiber: Math.round(totalFiber),
+    baseCalories: Math.round(totalCalories),
+    baseProtein: Math.round(totalProtein),
+    baseCarbs: Math.round(totalCarbs),
+    baseFat: Math.round(totalFat),
+    baseFiber: Math.round(totalFiber),
+    servingSizeMultiplier: 1,
+    customGrams: null,
+    confidenceScore: 'medium',
+    assumptions: '• Mock estimation from database synonyms.',
+    ingredients: baseIngredients
   };
 }
 
@@ -268,24 +291,18 @@ function mockGetRecipes(params) {
 // CLIENT INSTANTIATORS
 // ==========================================
 
-function getGeminiClient(customKeyConfig) {
-  // Check if custom key was submitted in user profile
-  if (customKeyConfig && customKeyConfig.provider === 'gemini' && customKeyConfig.key) {
-    return new GoogleGenerativeAI(customKeyConfig.key);
+function getGroqClient(customKeyConfig) {
+  if (customKeyConfig && customKeyConfig.provider === 'groq' && customKeyConfig.key) {
+    return new OpenAI({
+      apiKey: customKeyConfig.key,
+      baseURL: 'https://api.groq.com/openai/v1'
+    });
   }
-  // Check backend .env
-  if (process.env.GEMINI_API_KEY) {
-    return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  }
-  return null;
-}
-
-function getOpenAIClient(customKeyConfig) {
-  if (customKeyConfig && customKeyConfig.provider === 'openai' && customKeyConfig.key) {
-    return new OpenAI({ apiKey: customKeyConfig.key });
-  }
-  if (process.env.OPENAI_API_KEY) {
-    return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  if (process.env.GROQ_API_KEY) {
+    return new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1'
+    });
   }
   return null;
 }
@@ -298,59 +315,69 @@ function getOpenAIClient(customKeyConfig) {
  * Natural language meal analysis
  */
 exports.analyzeMealLog = async (mealText, customKeyConfig) => {
-  // 1. Try Gemini
-  const genAI = getGeminiClient(customKeyConfig);
-  if (genAI) {
+  // 1. Try Groq
+  const groq = getGroqClient(customKeyConfig);
+  if (groq) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-        generationConfig: { responseMimeType: 'application/json' }
-      });
-      const prompt = `Analyze this food diary entry: "${mealText}".
-      Estimate the total nutritional values. Output ONLY a valid JSON object matching this schema:
-      {
-        "foodName": "brief summary of ingredients matched",
-        "calories": number,
-        "protein": number (in grams),
-        "carbs": number (in grams),
-        "fat": number (in grams),
-        "fiber": number (in grams)
-      }`;
-      
-      const result = await model.generateContent(prompt);
-      const resText = result.response.text();
-      return JSON.parse(resText);
-    } catch (e) {
-      console.warn("Gemini meal analysis failed, trying fallback...", e.message);
-    }
-  }
-
-  // 2. Try OpenAI
-  const openai = getOpenAIClient(customKeyConfig);
-  if (openai) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: 'You are an expert nutritionist. Estimate calories, protein (g), carbs (g), fat (g), and fiber (g) from user meal logs. Output JSON containing foodName, calories, protein, carbs, fat, fiber.'
+            content: `You are an expert nutritionist. Analyze this food entry: "${mealText}".
+            Extract the primary dish/food name. Also extract any quantity specified, like "serving size multiplier" or "custom grams".
+            If the dish is a custom or composed dish (like a mixed plate, or something not simple like a single fruit), you must also estimate its typical ingredients and their weights in grams.
+            Output ONLY a valid JSON object matching this schema:
+            {
+              "dishName": "name of the dish or food item",
+              "quantityText": "description of quantity e.g. 1 cup, 200g, vague",
+              "servingSizeMultiplier": number (default 1),
+              "customGrams": number or null (if user explicitly specified weight in grams, e.g. 150),
+              "confidenceScore": "high" | "medium" | "low" (high if exact weight/serving is specified, medium if standard portion, low if vague/some),
+              "ingredients": [
+                { "name": "ingredient name", "grams": number }
+              ]
+            }`
           },
           {
             role: 'user',
-            content: `I ate: "${mealText}"`
+            content: `Food log: "${mealText}"`
           }
         ]
       });
-      return JSON.parse(response.choices[0].message.content);
+
+      const parsed = JSON.parse(response.choices[0].message.content);
+      
+      const cleanDish = (parsed.dishName || '').toLowerCase().trim();
+      const templateKeys = Object.keys(require('../config/nutritionDb').RECIPE_TEMPLATES);
+      const isTemplateMatch = templateKeys.some(key => cleanDish.includes(key) || key.includes(cleanDish));
+      const isSingleIngredient = await nutritionService.getIngredientNutrition(cleanDish);
+
+      if (isTemplateMatch || isSingleIngredient) {
+        return await nutritionService.estimateNutrition(
+          parsed.dishName,
+          parsed.quantityText || '',
+          parsed.servingSizeMultiplier || 1,
+          parsed.customGrams || null,
+          parsed.confidenceScore || 'medium'
+        );
+      } else {
+        return await nutritionService.estimateCustomIngredientList(
+          parsed.dishName,
+          parsed.ingredients || [],
+          parsed.servingSizeMultiplier || 1,
+          parsed.customGrams || null,
+          parsed.confidenceScore || 'medium'
+        );
+      }
     } catch (e) {
-      console.warn("OpenAI meal analysis failed, trying fallback...", e.message);
+      console.warn("Groq meal analysis failed, trying fallback...", e.message);
     }
   }
 
-  // 3. Mock Fallback
-  return mockParseMeal(mealText);
+  // 2. Mock Fallback
+  return await mockParseMeal(mealText);
 };
 
 /**
@@ -359,68 +386,32 @@ exports.analyzeMealLog = async (mealText, customKeyConfig) => {
 exports.generateRecipeRecommendations = async (params, customKeyConfig) => {
   const { pantryItems, goal, dietaryRestrictions, favoriteCuisines, remainingCalories } = params;
 
-  // 1. Try Gemini
-  const genAI = getGeminiClient(customKeyConfig);
-  if (genAI) {
+  // 1. Try Groq
+  const groq = getGroqClient(customKeyConfig);
+  if (groq) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-        generationConfig: { responseMimeType: 'application/json' }
-      });
-      const prompt = `You are an expert chef and dietitian. Recommend 3 delicious recipes using:
-      Pantry items: ${JSON.stringify(pantryItems.map(p => ({ name: p.name, qty: p.quantity, unit: p.unit })))}
-      Health Goal: ${goal}
-      Dietary restrictions: ${JSON.stringify(dietaryRestrictions)}
-      Favorite cuisines: ${JSON.stringify(favoriteCuisines)}
-      Calorie budget remaining: ${remainingCalories} kcal
-      
-      Output ONLY a JSON array of 3 recipe objects, with this exact schema:
-      [
-        {
-          "name": "Recipe Name",
-          "ingredients": ["1 cup ingredient name", "2 units other item"],
-          "instructions": ["Step 1...", "Step 2..."],
-          "calories": number,
-          "protein": number,
-          "carbs": number,
-          "fat": number,
-          "fiber": number
-        }
-      ]`;
-
-      const result = await model.generateContent(prompt);
-      return JSON.parse(result.response.text());
-    } catch (e) {
-      console.warn("Gemini recipe recommendation failed, trying fallback...", e.message);
-    }
-  }
-
-  // 2. Try OpenAI
-  const openai = getOpenAIClient(customKeyConfig);
-  if (openai) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: 'You are an expert chef assistant. Return a JSON object with key "recipes" containing an array of 3 recipe objects. Each recipe must list name, ingredients (array of strings), instructions (array of strings), calories, protein, carbs, fat, fiber.'
+            content: 'You are an expert chef assistant. Return ONLY a JSON object with key "recipes" containing an array of 3 recipe objects. Each recipe must list name, ingredients (array of strings), instructions (array of strings), calories, protein, carbs, fat, fiber.'
           },
           {
             role: 'user',
-            content: `Pantry ingredients: ${JSON.stringify(pantryItems)}. Goal: ${goal}. Restrictions: ${JSON.stringify(dietaryRestrictions)}. Remaining calories: ${remainingCalories}. Recommend 3 recipes.`
+            content: `Pantry ingredients: ${JSON.stringify(pantryItems.map(p => ({ name: p.name, qty: p.quantity, unit: p.unit })))}. Goal: ${goal}. Restrictions: ${JSON.stringify(dietaryRestrictions)}. Favorite cuisines: ${JSON.stringify(favoriteCuisines)}. Remaining calories: ${remainingCalories}. Recommend 3 recipes.`
           }
         ]
       });
       const data = JSON.parse(response.choices[0].message.content);
       return data.recipes || data;
     } catch (e) {
-      console.warn("OpenAI recipe recommendation failed, trying fallback...", e.message);
+      console.warn("Groq recipe recommendation failed, trying fallback...", e.message);
     }
   }
 
-  // 3. Mock Fallback
+  // 2. Mock Fallback
   return mockGetRecipes({ pantryItems, goal, dietaryRestrictions });
 };
 
@@ -446,48 +437,21 @@ exports.generateChatResponse = async (chatHistory, userContext, customKeyConfig)
   3. Keep calorie targets and dietary restrictions strictly in mind.
   4. Formulate structured, neat replies using clean formatting. Keep recipes details clean.`;
 
-  // 1. Try Gemini
-  const genAI = getGeminiClient(customKeyConfig);
-  if (genAI) {
-    try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-      const contents = [
-        { role: 'user', parts: [{ text: systemPrompt }] }
-      ];
-
-      // Add chat history (mapping roles correctly)
-      chatHistory.forEach(msg => {
-        contents.push({
-          role: msg.role === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.content }]
-        });
-      });
-
-      const chat = model.startChat({ history: contents });
-      // Send the last message in history or a follow-up
-      const lastUserMsg = chatHistory[chatHistory.length - 1]?.content || "Hello!";
-      const result = await chat.sendMessage(lastUserMsg);
-      return result.response.text();
-    } catch (e) {
-      console.warn("Gemini chat failed, trying fallback...", e.message);
-    }
-  }
-
-  // 2. Try OpenAI
-  const openai = getOpenAIClient(customKeyConfig);
-  if (openai) {
+  // 1. Try Groq
+  const groq = getGroqClient(customKeyConfig);
+  if (groq) {
     try {
       const messages = [
         { role: 'system', content: systemPrompt },
         ...chatHistory.map(msg => ({ role: msg.role, content: msg.content }))
       ];
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
         messages
       });
       return response.choices[0].message.content;
     } catch (e) {
-      console.warn("OpenAI chat failed, trying fallback...", e.message);
+      console.warn("Groq chat failed, trying fallback...", e.message);
     }
   }
 
@@ -543,63 +507,42 @@ ${selected.instructions.map((step, idx) => `${idx + 1}. ${step}`).join('\n')}`;
 exports.generateWeeklyMealPlan = async (params, customKeyConfig) => {
   const { goal, dietaryRestrictions, favoriteCuisines, pantryItems } = params;
 
-  // 1. Try Gemini
-  const genAI = getGeminiClient(customKeyConfig);
-  if (genAI) {
+  // 1. Try Groq
+  const groq = getGroqClient(customKeyConfig);
+  if (groq) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-        generationConfig: { responseMimeType: 'application/json' }
-      });
-      const prompt = `Generate a 7-day weekly meal planner (Breakfast, Lunch, Dinner, Snack for Monday to Sunday) optimized for:
-      Goal: ${goal}
-      Restrictions: ${JSON.stringify(dietaryRestrictions)}
-      Cuisines: ${JSON.stringify(favoriteCuisines)}
-      Pantry items: ${JSON.stringify(pantryItems.map(p => p.name))}
-      
-      Ensure you optimize for nutrition goals and pantry usage (using what is available).
-      Output ONLY a JSON array of 7 objects representing the days of the week, structured like this:
-      [
-        {
-          "day": "Monday",
-          "meals": {
-            "breakfast": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
-            "lunch": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
-            "dinner": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
-            "snack": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" }
-          }
-        }
-      ]`;
-
-      const result = await model.generateContent(prompt);
-      return JSON.parse(result.response.text());
-    } catch (e) {
-      console.warn("Gemini weekly planner failed, trying fallback...", e.message);
-    }
-  }
-
-  // 2. Try OpenAI
-  const openai = getOpenAIClient(customKeyConfig);
-  if (openai) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: 'You are an expert meal planner. Output a JSON object containing an array of 7 day items. Each day item has "day" (e.g. Monday) and "meals" object containing breakfast, lunch, dinner, and snack details (name, calories, protein, carbs, fat, recipe description).'
+            content: `You are an expert meal planner. Output ONLY a valid JSON object containing a "plan" key with an array of 7 day items. Each day item has "day" (e.g. Monday) and "meals" object containing breakfast, lunch, dinner, and snack details (name, calories, protein, carbs, fat, recipe description).
+            The structure must match this schema:
+            {
+              "plan": [
+                {
+                  "day": "Monday",
+                  "meals": {
+                    "breakfast": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
+                    "lunch": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
+                    "dinner": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" },
+                    "snack": { "name": "Meal Name", "calories": number, "protein": number, "carbs": number, "fat": number, "recipe": "brief desc" }
+                  }
+                }
+              ]
+            }`
           },
           {
             role: 'user',
-            content: `Plan for goal: ${goal}, restrictions: ${JSON.stringify(dietaryRestrictions)}, pantry: ${JSON.stringify(pantryItems)}.`
+            content: `Plan weekly menu for goal: ${goal}, restrictions: ${JSON.stringify(dietaryRestrictions)}, cuisines: ${JSON.stringify(favoriteCuisines)}, pantry: ${JSON.stringify(pantryItems.map(p => p.name))}.`
           }
         ]
       });
       const data = JSON.parse(response.choices[0].message.content);
       return data.plan || data.days || data;
     } catch (e) {
-      console.warn("OpenAI weekly planner failed, trying fallback...", e.message);
+      console.warn("Groq weekly planner failed, trying fallback...", e.message);
     }
   }
 
@@ -662,53 +605,27 @@ exports.generateWeeklyMealPlan = async (params, customKeyConfig) => {
  * Suggest shopping items based on pantry and nutritional goals
  */
 exports.generateGroceryRecommendations = async (pantryItems, goal, customKeyConfig) => {
-  // 1. Try Gemini
-  const genAI = getGeminiClient(customKeyConfig);
-  if (genAI) {
+  // 1. Try Groq
+  const groq = getGroqClient(customKeyConfig);
+  if (groq) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-        generationConfig: { responseMimeType: 'application/json' }
-      });
-      const prompt = `Given the user has these pantry items: ${JSON.stringify(pantryItems.map(p => p.name))}
-      and health goal: ${goal}.
-      Analyze what is missing for a balanced nutrition profile and recommend a shopping list.
-      Output ONLY a JSON object matching this schema:
-      {
-        "missingIngredients": ["item 1", "item 2"],
-        "proteinRichFoods": ["item 1", "item 2"],
-        "fruitsAndVegetables": ["item 1", "item 2"],
-        "weeklyShoppingList": ["item 1", "item 2"]
-      }`;
-
-      const result = await model.generateContent(prompt);
-      return JSON.parse(result.response.text());
-    } catch (e) {
-      console.warn("Gemini grocery suggestions failed, trying fallback...", e.message);
-    }
-  }
-
-  // 2. Try OpenAI
-  const openai = getOpenAIClient(customKeyConfig);
-  if (openai) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: 'You are an intelligent shopping assistant. Return a JSON object with missingIngredients, proteinRichFoods, fruitsAndVegetables, and weeklyShoppingList arrays.'
+            content: 'You are an intelligent shopping assistant. Return ONLY a JSON object matching this schema: { "missingIngredients": ["item 1", "item 2"], "proteinRichFoods": ["item 1", "item 2"], "fruitsAndVegetables": ["item 1", "item 2"], "weeklyShoppingList": ["item 1", "item 2"] }.'
           },
           {
             role: 'user',
-            content: `Pantry has: ${JSON.stringify(pantryItems)}. Goal: ${goal}. Generate shopping advice.`
+            content: `Given user has these pantry items: ${JSON.stringify(pantryItems.map(p => p.name))} and health goal: ${goal}. Analyze what is missing for a balanced nutrition profile and recommend a shopping list.`
           }
         ]
       });
       return JSON.parse(response.choices[0].message.content);
     } catch (e) {
-      console.warn("OpenAI grocery suggestions failed, trying fallback...", e.message);
+      console.warn("Groq grocery suggestions failed, trying fallback...", e.message);
     }
   }
 

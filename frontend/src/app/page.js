@@ -94,7 +94,7 @@ export default function DashboardPage() {
   // Fallbacks if stats not loaded
   const calorieTarget = profile?.calorieTarget || 2000;
   const caloriesConsumed = dailyLog?.totalCalories || 0;
-  const remainingCalories = Math.max(0, calorieTarget - caloriesConsumed);
+  const remainingCalories = calorieTarget - caloriesConsumed;
   const caloriePercent = Math.min(100, Math.round((caloriesConsumed / calorieTarget) * 100));
 
   // Circular progress stroke calculation
@@ -109,24 +109,24 @@ export default function DashboardPage() {
       consumed: dailyLog?.totalProtein || 0, 
       target: profile?.proteinTarget || 150, 
       unit: 'g',
-      color: 'bg-rose-400', 
-      text: 'text-rose-600' 
+      color: 'bg-pink-500', 
+      text: 'text-pink-500' 
     },
     { 
       name: 'Carbs', 
       consumed: dailyLog?.totalCarbs || 0, 
       target: profile?.carbTarget || 220, 
       unit: 'g',
-      color: 'bg-pink-400', 
-      text: 'text-pink-600' 
+      color: 'bg-emerald-500', 
+      text: 'text-emerald-500' 
     },
     { 
       name: 'Fat', 
       consumed: dailyLog?.totalFat || 0, 
       target: profile?.fatTarget || 65, 
       unit: 'g',
-      color: 'bg-pink-300', 
-      text: 'text-pink-500' 
+      color: 'bg-sky-500', 
+      text: 'text-sky-500' 
     }
   ];
 
@@ -137,9 +137,9 @@ export default function DashboardPage() {
   const renderCalorieChart = () => {
     if (historyData.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center h-48 bg-pink-50/20 rounded-2xl border border-pink-100">
-          <Utensils size={24} className="text-pink-300 mb-2" />
-          <p className="text-xs text-rose-500/80">No calorie logs for this week yet.</p>
+        <div className="flex flex-col items-center justify-center h-48 bg-zinc-900/50 rounded-2xl border border-zinc-800">
+          <Utensils size={24} className="text-zinc-600 mb-2" />
+          <p className="text-xs text-zinc-500">No calorie logs for this week yet.</p>
         </div>
       );
     }
@@ -177,8 +177,8 @@ export default function DashboardPage() {
           </defs>
 
           {/* Grid lines */}
-          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#fbcfe8" strokeWidth={1} />
-          <line x1={padding} y1={padding} x2={chartWidth - padding} y2={padding} stroke="#fbcfe8" strokeWidth={0.5} strokeDasharray="3,3" />
+          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#27272a" strokeWidth={1} />
+          <line x1={padding} y1={padding} x2={chartWidth - padding} y2={padding} stroke="#27272a" strokeWidth={0.5} strokeDasharray="3,3" />
 
           {/* Target Baseline */}
           <line 
@@ -186,11 +186,11 @@ export default function DashboardPage() {
             y1={targetY} 
             x2={chartWidth - padding} 
             y2={targetY} 
-            stroke="#f43f5e" 
+            stroke="#ef4444" 
             strokeWidth={1} 
             strokeDasharray="4,4" 
           />
-          <text x={chartWidth - padding - 60} y={targetY - 5} fill="#f43f5e" fontSize={8} className="font-extrabold">
+          <text x={chartWidth - padding - 75} y={targetY - 5} fill="#ef4444" fontSize={8} className="font-bold">
             Target: {calorieTarget} kcal
           </text>
 
@@ -198,16 +198,16 @@ export default function DashboardPage() {
           {areaPathData && <path d={areaPathData} fill="url(#chartGradient)" />}
 
           {/* Line Path */}
-          {pathData && <path d={pathData} fill="none" stroke="#db2777" strokeWidth={2} />}
+          {pathData && <path d={pathData} fill="none" stroke="#ec4899" strokeWidth={2} />}
 
           {/* Data Nodes */}
           {points.map((p, idx) => (
             <g key={idx}>
-              <circle cx={p.x} cy={p.y} r={3} fill="#ec4899" stroke="#ffffff" strokeWidth={1} />
-              <text x={p.x} y={p.y - 8} fill="#881337" fontSize={8} textAnchor="middle" className="font-bold">
+              <circle cx={p.x} cy={p.y} r={3} fill="#ec4899" stroke="#09090b" strokeWidth={1} />
+              <text x={p.x} y={p.y - 8} fill="#a1a1aa" fontSize={8} textAnchor="middle" className="font-semibold">
                 {p.val}
               </text>
-              <text x={p.x} y={chartHeight - padding + 12} fill="#9f1239" fontSize={8} textAnchor="middle" className="font-bold">
+              <text x={p.x} y={chartHeight - padding + 12} fill="#71717a" fontSize={8} textAnchor="middle" className="font-semibold">
                 {p.date}
               </text>
             </g>
@@ -220,32 +220,32 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       
-      {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-gradient-to-r from-pink-100/40 via-white to-rose-100/40 border border-pink-200/50 p-6 md:p-8 rounded-3xl backdrop-blur-md relative overflow-hidden shadow-sm">
+      {/* Welcome Banner - Modern Sleek Dark Container with Pink Gradient */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-zinc-900 border border-zinc-800 p-6 md:p-8 rounded-3xl relative overflow-hidden shadow-md">
         <div className="absolute right-10 top-0 bottom-0 w-48 h-48 bg-pink-500/5 rounded-full blur-2xl" />
         <div className="space-y-2 relative z-10">
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            Hi, <span className="bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">{user?.name}</span>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">
+            Hi, <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">{user?.name}</span>
           </h1>
-          <p className="text-sm text-rose-700 max-w-lg font-semibold">
+          <p className="text-sm text-zinc-400 max-w-lg font-medium">
             Welcome back to your nutrition dashboard. Today is a great day to eat clean, reduce pantry waste, and hit your fitness targets.
           </p>
           {expiringCount > 0 && (
-            <div className="flex items-center space-x-2 text-xs text-pink-700 font-extrabold bg-pink-100 border border-pink-200/50 p-2.5 rounded-xl mt-3 inline-block">
-              <AlertTriangle size={14} className="text-pink-550" />
+            <div className="flex items-center space-x-2 text-xs text-pink-400 font-bold bg-pink-500/10 border border-pink-500/20 p-2.5 rounded-xl mt-3 inline-block">
+              <AlertTriangle size={14} className="text-pink-500 animate-pulse" />
               <span>You have {expiringCount} pantry item{expiringCount > 1 ? 's' : ''} expiring soon!</span>
-              <Link href="/pantry" className="underline hover:text-pink-900 ml-1">
+              <Link href="/pantry" className="underline hover:text-pink-300 ml-1">
                 View Pantry
               </Link>
             </div>
           )}
         </div>
         <div className="mt-4 md:mt-0 flex shrink-0 space-x-3">
-          <Link href="/tracker" className="flex items-center space-x-1 bg-pink-500 hover:bg-pink-400 text-white font-extrabold text-xs px-4 py-3 rounded-xl shadow-lg shadow-pink-500/10 transition-all">
+          <Link href="/tracker" className="flex items-center space-x-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-extrabold text-xs px-4 py-3 rounded-xl shadow-lg shadow-pink-500/10 transition-all">
             <Plus size={16} />
             <span>Log a Meal</span>
           </Link>
-          <Link href="/chat" className="flex items-center space-x-1 bg-white hover:bg-pink-50 text-pink-700 border border-pink-200/50 font-extrabold text-xs px-4 py-3 rounded-xl transition-all">
+          <Link href="/chat" className="flex items-center space-x-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-extrabold text-xs px-4 py-3 rounded-xl transition-all">
             <Sparkles size={16} className="text-pink-500" />
             <span>Ask Kitchen Copilot</span>
           </Link>
@@ -256,20 +256,19 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Calorie Ring Budget Card */}
-        <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden h-[340px] shadow-sm shadow-pink-100/20">
-          <div className="absolute top-4 left-4 text-xs font-bold text-rose-600/75 uppercase tracking-widest flex items-center space-x-1.5">
-            <Flame size={14} className="text-pink-550" />
-            <span>Calorie Budget</span>
+        <div className="bg-white rounded-3xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden h-[340px]">
+          <div className="absolute top-5 left-5 text-xs font-extrabold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5">
+            <Flame size={14} className="text-pink-500" />
+            <span>Calories Left</span>
           </div>
 
           <div className="relative w-40 h-40 flex items-center justify-center mt-4">
-            {/* SVG Progress Circle */}
             <svg className="w-full h-full transform -rotate-90">
               <circle
                 cx="80"
                 cy="80"
                 r={circleRadius}
-                className="stroke-pink-100 fill-none"
+                className="stroke-zinc-100 fill-none"
                 strokeWidth="10"
               />
               <circle
@@ -284,27 +283,29 @@ export default function DashboardPage() {
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-3xl font-black text-rose-950">{remainingCalories}</span>
-              <span className="text-[10px] uppercase font-bold text-rose-500/80 tracking-wider">kcal left</span>
+              <span className={`text-3xl font-black ${remainingCalories >= 0 ? 'text-zinc-950' : 'text-rose-500'}`}>
+                {remainingCalories >= 0 ? `Left ${remainingCalories}` : `${remainingCalories} left`}
+              </span>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">/ {calorieTarget} kcal</span>
             </div>
           </div>
 
-          <div className="w-full grid grid-cols-2 gap-4 mt-6 border-t border-pink-100 pt-4">
+          <div className="w-full grid grid-cols-2 gap-4 mt-6 border-t border-zinc-100 pt-4 text-zinc-900">
             <div>
-              <p className="text-[10px] uppercase font-bold text-rose-550">Consumed</p>
-              <p className="text-lg font-extrabold text-pink-600">{caloriesConsumed} kcal</p>
+              <p className="text-[10px] uppercase font-bold text-zinc-400">Consumed</p>
+              <p className="text-base font-extrabold text-pink-500">{caloriesConsumed} kcal</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-rose-550">Target Budget</p>
-              <p className="text-lg font-extrabold text-rose-950">{calorieTarget} kcal</p>
+              <p className="text-[10px] uppercase font-bold text-zinc-400">Target Budget</p>
+              <p className="text-base font-extrabold text-zinc-950">{calorieTarget} kcal</p>
             </div>
           </div>
         </div>
 
         {/* Macronutrient Budgets Card */}
-        <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col justify-between h-[340px] shadow-sm shadow-pink-100/20">
-          <div className="text-xs font-bold text-rose-600/75 uppercase tracking-widest flex items-center space-x-1.5">
-            <Apple size={14} className="text-pink-550" />
+        <div className="bg-white rounded-3xl p-6 flex flex-col justify-between h-[340px]">
+          <div className="text-xs font-extrabold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5">
+            <Apple size={14} className="text-pink-500" />
             <span>Macronutrient Targets</span>
           </div>
 
@@ -312,14 +313,14 @@ export default function DashboardPage() {
             {macros.map((macro) => {
               const pct = Math.min(100, Math.round((macro.consumed / macro.target) * 100));
               return (
-                <div key={macro.name} className="space-y-1.5">
+                <div key={macro.name} className="space-y-1.5 text-zinc-900">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="text-rose-950">{macro.name}</span>
-                    <span className="text-rose-700/80">
+                    <span>{macro.name}</span>
+                    <span className="text-zinc-500">
                       <strong className={macro.text}>{macro.consumed}{macro.unit}</strong> / {macro.target}{macro.unit} ({pct}%)
                     </span>
                   </div>
-                  <div className="w-full bg-pink-100/50 h-2.5 rounded-full overflow-hidden border border-pink-200/20">
+                  <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
                     <div 
                       className={`${macro.color} h-full rounded-full transition-all duration-500`}
                       style={{ width: `${pct}%` }}
@@ -330,21 +331,21 @@ export default function DashboardPage() {
             })}
           </div>
 
-          <div className="text-[10px] text-rose-500/80 text-center border-t border-pink-100 pt-4 font-bold">
+          <div className="text-[10px] text-zinc-400 text-center border-t border-zinc-100 pt-4 font-semibold">
             Macronutrients are automatically computed based on health goal.
           </div>
         </div>
 
         {/* Water Intake Logger Card */}
-        <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col justify-between h-[340px] shadow-sm shadow-pink-100/20">
-          <div className="text-xs font-bold text-rose-600/75 uppercase tracking-widest flex items-center space-x-1.5">
-            <Droplet size={14} className="text-pink-500" />
+        <div className="bg-white rounded-3xl p-6 flex flex-col justify-between h-[340px]">
+          <div className="text-xs font-extrabold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5">
+            <Droplet size={14} className="text-sky-500" />
             <span>Water Intake</span>
           </div>
 
-          <div className="flex flex-col items-center justify-center py-4 relative">
-            <span className="text-4xl font-extrabold text-pink-600">{dailyLog?.waterIntake || 0} <span className="text-sm font-semibold text-rose-500">ml</span></span>
-            <span className="text-xs text-rose-700 font-bold mt-1">Daily Target: 3000 ml</span>
+          <div className="flex flex-col items-center justify-center py-4 relative text-zinc-900">
+            <span className="text-4xl font-extrabold text-sky-500">{dailyLog?.waterIntake || 0} <span className="text-sm font-semibold text-zinc-400">ml</span></span>
+            <span className="text-xs text-zinc-500 font-bold mt-1">Daily Target: 3000 ml</span>
             
             {/* Visual cup status */}
             <div className="flex items-center space-x-1.5 mt-5">
@@ -356,8 +357,8 @@ export default function DashboardPage() {
                     key={cupNum}
                     className={`w-3.5 h-6 rounded-b-md border transition-all duration-300
                       ${active 
-                        ? 'bg-pink-400 border-pink-300 shadow-sm shadow-pink-450/20' 
-                        : 'bg-pink-50 border-pink-100'}`}
+                        ? 'bg-sky-400 border-sky-300 shadow-sm shadow-sky-500/10' 
+                        : 'bg-zinc-100 border-zinc-200'}`}
                   />
                 );
               })}
@@ -368,17 +369,17 @@ export default function DashboardPage() {
             <button
               onClick={() => handleUpdateWater(250)}
               disabled={waterChangeLoading}
-              className="flex-1 py-3 bg-pink-50 hover:bg-pink-100 active:scale-98 border border-pink-200/50 text-pink-700 text-xs font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all"
+              className="flex-1 py-3 bg-sky-50 hover:bg-sky-100 active:scale-98 border border-sky-100 text-sky-700 text-xs font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all"
             >
-              <Plus size={14} className="text-pink-500" />
+              <Plus size={14} className="text-sky-500" />
               <span>Cup (+250ml)</span>
             </button>
             <button
               onClick={() => handleUpdateWater(500)}
               disabled={waterChangeLoading}
-              className="flex-1 py-3 bg-pink-50 hover:bg-pink-100 active:scale-98 border border-pink-200/50 text-pink-700 text-xs font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all"
+              className="flex-1 py-3 bg-sky-50 hover:bg-sky-100 active:scale-98 border border-sky-100 text-sky-700 text-xs font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all"
             >
-              <Plus size={14} className="text-pink-500" />
+              <Plus size={14} className="text-sky-500" />
               <span>Bottle (+500ml)</span>
             </button>
           </div>
@@ -390,27 +391,27 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Calorie Analytics Line Chart */}
-        <div className="lg:col-span-2 bg-white border border-pink-100 rounded-3xl p-6 space-y-4 shadow-sm shadow-pink-100/20">
+        <div className="lg:col-span-2 bg-white rounded-3xl p-6 space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold text-rose-650 uppercase tracking-widest flex items-center space-x-1.5">
+            <h3 className="text-sm font-extrabold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5">
               <TrendingUp size={14} className="text-pink-500" />
               <span>Weekly Calorie Trends</span>
             </h3>
-            <span className="text-[10px] text-rose-500/80 font-bold uppercase">Last 7 Days</span>
+            <span className="text-[10px] text-zinc-400 font-bold uppercase">Last 7 Days</span>
           </div>
           {renderCalorieChart()}
         </div>
 
         {/* Near Expiry Pantry Highlights */}
-        <div className="bg-white border border-pink-100 rounded-3xl p-6 flex flex-col justify-between shadow-sm shadow-pink-100/20">
+        <div className="bg-white rounded-3xl p-6 flex flex-col justify-between">
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-rose-650 uppercase tracking-widest flex items-center space-x-1.5">
-              <AlertTriangle size={14} className="text-pink-600" />
+            <h3 className="text-sm font-extrabold text-zinc-500 uppercase tracking-widest flex items-center space-x-1.5">
+              <AlertTriangle size={14} className="text-pink-500" />
               <span>Fridge Expiry Warning</span>
             </h3>
 
             {expiringItems.length === 0 ? (
-              <div className="py-8 text-center text-rose-600 text-xs flex flex-col items-center">
+              <div className="py-8 text-center text-zinc-400 text-xs flex flex-col items-center">
                 <Sparkles size={20} className="text-pink-500 mb-2 animate-pulse" />
                 <span>All ingredients are perfectly fresh!</span>
               </div>
@@ -419,10 +420,10 @@ export default function DashboardPage() {
                 {expiringItems.slice(0, 4).map((item) => {
                   const daysLeft = Math.ceil((new Date(item.expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
                   return (
-                    <div key={item._id} className="flex justify-between items-center bg-pink-50/50 border border-pink-100 p-3 rounded-xl text-xs font-semibold">
+                    <div key={item._id} className="flex justify-between items-center bg-zinc-50 border border-zinc-100 p-3 rounded-xl text-xs font-semibold text-zinc-900">
                       <div>
-                        <p className="font-extrabold text-rose-950 capitalize">{item.name}</p>
-                        <p className="text-[10px] text-rose-600/80">{item.quantity} {item.unit}</p>
+                        <p className="font-extrabold capitalize text-zinc-950">{item.name}</p>
+                        <p className="text-[10px] text-zinc-450">{item.quantity} {item.unit}</p>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border
                         ${daysLeft <= 1 
@@ -438,7 +439,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <Link href="/pantry" className="w-full py-2.5 bg-pink-50 hover:bg-pink-100 text-center text-xs font-bold rounded-xl border border-pink-200 text-pink-700 block transition-all mt-4">
+          <Link href="/pantry" className="w-full py-2.5 bg-zinc-50 hover:bg-zinc-100 text-center text-xs font-extrabold rounded-xl border border-zinc-200 text-pink-500 hover:text-pink-600 block transition-all mt-4">
             Manage Pantry Items
           </Link>
         </div>

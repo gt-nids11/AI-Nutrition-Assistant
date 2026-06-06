@@ -80,6 +80,8 @@ export const trackerAPI = {
     apiCall('/tracker/meal', { method: 'POST', body: mealData }),
   deleteMeal: (id) => 
     apiCall(`/tracker/meal/${id}`, { method: 'DELETE' }),
+  updateMeal: (id, updateData) => 
+    apiCall(`/tracker/meal/${id}`, { method: 'PUT', body: updateData }),
   getDaily: (dateStr) => 
     apiCall(`/tracker/daily/${dateStr}`, { method: 'GET' }),
   updateWater: (amount, dateStr) => 

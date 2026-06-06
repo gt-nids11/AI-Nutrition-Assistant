@@ -71,7 +71,7 @@ const userProfileSchema = new mongoose.Schema({
     snacks: { type: String, default: '16:00' }
   },
   customApiKey: {
-    provider: { type: String, enum: ['none', 'gemini', 'openai'], default: 'none' },
+    provider: { type: String, enum: ['none', 'groq'], default: 'none' },
     key: { type: String, default: '' }
   },
   mealPlan: {

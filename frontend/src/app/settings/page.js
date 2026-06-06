@@ -391,8 +391,7 @@ export default function SettingsPage() {
                 className="w-full bg-pink-50/10 border border-pink-100 rounded-xl py-3 px-3 text-rose-955 font-bold focus:border-pink-500 focus:outline-none font-semibold"
               >
                 <option value="none">Local Mock Engine (Out-of-the-box)</option>
-                <option value="gemini">Google Gemini API</option>
-                <option value="openai">OpenAI GPT API</option>
+                <option value="groq">Groq API</option>
               </select>
             </div>
 
@@ -401,7 +400,7 @@ export default function SettingsPage() {
                 <label className="block uppercase tracking-wider mb-1">Paste API Key</label>
                 <input
                   type="password"
-                  placeholder="e.g. AIzaSy..."
+                  placeholder="e.g. gsk_..."
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   className="block w-full rounded-xl border border-pink-100 bg-pink-50/10 py-3 px-3.5 text-sm text-rose-950 font-bold focus:border-pink-500 focus:outline-none"

@@ -97,6 +97,18 @@ exports.logMeal = async (req, res) => {
       carbs: foodDetails.carbs,
       fat: foodDetails.fat,
       fiber: foodDetails.fiber,
+
+      baseCalories: foodDetails.baseCalories !== undefined ? foodDetails.baseCalories : foodDetails.calories,
+      baseProtein: foodDetails.baseProtein !== undefined ? foodDetails.baseProtein : foodDetails.protein,
+      baseCarbs: foodDetails.baseCarbs !== undefined ? foodDetails.baseCarbs : foodDetails.carbs,
+      baseFat: foodDetails.baseFat !== undefined ? foodDetails.baseFat : foodDetails.fat,
+      baseFiber: foodDetails.baseFiber !== undefined ? foodDetails.baseFiber : foodDetails.fiber,
+      servingSizeMultiplier: foodDetails.servingSizeMultiplier || 1,
+      customGrams: foodDetails.customGrams || null,
+      confidenceScore: foodDetails.confidenceScore || 'medium',
+      assumptions: foodDetails.assumptions || '',
+      ingredients: foodDetails.ingredients || [],
+
       loggedAt: logTime
     });
 
@@ -135,6 +147,119 @@ exports.deleteMeal = async (req, res) => {
     const summary = await updateDailySummary(req.user.id, dateStr);
 
     res.json({ success: true, message: 'Meal log removed', summary });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Update logged meal (serving size / custom grams)
+// @route   PUT /api/tracker/meal/:id
+// @access  Private
+exports.updateMeal = async (req, res) => {
+  try {
+    const { servingSizeMultiplier, customGrams } = req.body;
+    const meal = await MealLog.findById(req.params.id);
+
+    if (!meal) {
+      return res.status(404).json({ success: false, message: 'Meal not found' });
+    }
+
+    if (meal.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+
+    // Capture initial values for base variables if they don't exist (legacy logs support)
+    if (meal.baseCalories === undefined || meal.baseCalories === 0) {
+      meal.baseCalories = meal.calories;
+      meal.baseProtein = meal.protein;
+      meal.baseCarbs = meal.carbs;
+      meal.baseFat = meal.fat;
+      meal.baseFiber = meal.fiber;
+    }
+
+    const oldMult = meal.servingSizeMultiplier || 1;
+
+    if (servingSizeMultiplier !== undefined) {
+      const mult = Number(servingSizeMultiplier);
+      meal.servingSizeMultiplier = mult;
+      meal.customGrams = null;
+
+      // Scale macros
+      meal.calories = Math.round(meal.baseCalories * mult);
+      meal.protein = Math.round(meal.baseProtein * mult);
+      meal.carbs = Math.round(meal.baseCarbs * mult);
+      meal.fat = Math.round(meal.baseFat * mult);
+      meal.fiber = Math.round(meal.baseFiber * mult);
+
+      // Scale ingredients
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        const ratio = mult / oldMult;
+        meal.ingredients = meal.ingredients.map(ing => {
+          const baseG = ing.baseGrams || ing.grams || 100;
+          ing.grams = Math.round(baseG * mult);
+          
+          ing.calories = Math.round(ing.calories * ratio);
+          ing.protein = Math.round(ing.protein * ratio);
+          ing.carbs = Math.round(ing.carbs * ratio);
+          ing.fat = Math.round(ing.fat * ratio);
+          ing.fiber = Math.round(ing.fiber * ratio);
+          
+          return ing;
+        });
+      }
+      
+      if (mult === 1) {
+        meal.confidenceScore = 'medium';
+      } else {
+        meal.confidenceScore = 'high';
+      }
+    } else if (customGrams !== undefined) {
+      const grams = Number(customGrams);
+      meal.customGrams = grams;
+
+      // Calculate total base weight
+      const totalBaseWeight = meal.ingredients.reduce((acc, ing) => acc + (ing.baseGrams || ing.grams || 100), 0) || 150;
+      const mult = grams / totalBaseWeight;
+      meal.servingSizeMultiplier = mult;
+
+      // Scale macros
+      meal.calories = Math.round(meal.baseCalories * mult);
+      meal.protein = Math.round(meal.baseProtein * mult);
+      meal.carbs = Math.round(meal.baseCarbs * mult);
+      meal.fat = Math.round(meal.baseFat * mult);
+      meal.fiber = Math.round(meal.baseFiber * mult);
+
+      // Scale ingredients
+      if (meal.ingredients && meal.ingredients.length > 0) {
+        const ratio = mult / oldMult;
+        meal.ingredients = meal.ingredients.map(ing => {
+          const baseG = ing.baseGrams || ing.grams || 100;
+          ing.grams = Math.round(baseG * mult);
+
+          ing.calories = Math.round(ing.calories * ratio);
+          ing.protein = Math.round(ing.protein * ratio);
+          ing.carbs = Math.round(ing.carbs * ratio);
+          ing.fat = Math.round(ing.fat * ratio);
+          ing.fiber = Math.round(ing.fiber * ratio);
+
+          return ing;
+        });
+      }
+      meal.confidenceScore = 'high';
+    }
+
+    await meal.save();
+
+    // Update daily summary
+    const dateStr = meal.loggedAt.toISOString().split('T')[0];
+    const summary = await updateDailySummary(req.user.id, dateStr);
+
+    res.json({
+      success: true,
+      mealLog: meal,
+      summary
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });

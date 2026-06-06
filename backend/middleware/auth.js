@@ -1,6 +1,9 @@
+//Import required things
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+
+//Create middleware function-protect
 const protect = async (req, res, next) => {
   let token;
 

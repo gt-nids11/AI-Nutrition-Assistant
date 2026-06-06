@@ -1,31 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
-  --font-serif: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
-  --font-mono: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
+  --font-sans: "Outfit", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Outfit", "Plus Jakarta Sans", ui-serif, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
-
-@font-face {
-  font-family: "Virgil";
-  src: url("/fonts/Virgil.woff2") format("woff2");
-  font-display: swap;
-}
-
 
 :root {
-  --background: #fff5f6; /* Soft pastel pink */
-  --foreground: #471921; /* Deep rose-charcoal */
+  --background: #09090b; /* Zinc 950 deep dark background */
+  --foreground: #fafafa; /* Zinc 50 light text */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif !important;
+  font-family: "Outfit", "Plus Jakarta Sans", sans-serif !important;
+  min-height: 100vh;
 }
 
-
-/* Custom Scrollbars in soft rose tones */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -36,12 +30,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fbcfe8; /* pink-200 */
+  background: #27272a; /* zinc-800 */
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f472b6; /* pink-400 */
+  background: #3f3f46; /* zinc-700 */
 }
 
 /* Fade-in animations */
@@ -60,39 +54,65 @@ body {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Custom Drop Shadows for Text and Headings to look premium & hand-drawn */
-h1 {
-  text-shadow: 2px 2px 0px rgba(244, 114, 182, 0.25); /* solid offset pink shadow */
-}
-
-h2, h3 {
-  text-shadow: 1.5px 1.5px 0px rgba(244, 114, 182, 0.2); /* solid offset pink shadow */
-}
-
-h4, h5, h6 {
-  text-shadow: 1px 1px 0px rgba(244, 114, 182, 0.15);
-}
-
-/* Make page titles have a distinct separation */
+/* Page titles layout spacing */
 h1.text-3xl {
   margin-bottom: 0.35rem;
 }
 
-/* Card division system - adds a solid, sketchy border and pop-out drop shadow */
+/* Premium White Card Layouts nested in the Dark Canvas */
+.bg-white {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+
 .bg-white.rounded-3xl,
 .bg-white.p-6.rounded-3xl,
 .bg-white.p-8.rounded-3xl {
-  border: 2px solid #fbcfe8 !important; /* Thick pink-200 border for clean division */
-  box-shadow: 5px 5px 0px rgba(244, 114, 182, 0.15) !important; /* Premium hand-drawn shadow */
+  position: relative;
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Gradient glow shadow behind cards */
+.bg-white.rounded-3xl::before,
+.bg-white.p-6.rounded-3xl::before,
+.bg-white.p-8.rounded-3xl::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: -6px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(244, 63, 94, 0.15));
+  border-radius: 24px;
+  filter: blur(12px);
+  z-index: -1;
+  transition: all 0.25s ease-in-out;
 }
 
 .bg-white.rounded-3xl:hover,
 .bg-white.p-6.rounded-3xl:hover,
 .bg-white.p-8.rounded-3xl:hover {
-  transform: translate(-1.5px, -1.5px);
-  box-shadow: 7.5px 7.5px 0px rgba(244, 114, 182, 0.22) !important; /* Lifted state */
+  transform: translateY(-2px);
 }
 
+.bg-white.rounded-3xl:hover::before,
+.bg-white.p-6.rounded-3xl:hover::before,
+.bg-white.p-8.rounded-3xl:hover::before {
+  top: 10px;
+  left: 4px;
+  right: 4px;
+  bottom: -10px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(244, 63, 94, 0.25));
+  filter: blur(16px);
+}
 
-
+/* Ensure all subtext within light cards remains perfectly readable */
+.bg-white p, 
+.bg-white span, 
+.bg-white label,
+.bg-white li,
+.bg-white svg {
+  color: inherit;
+}
