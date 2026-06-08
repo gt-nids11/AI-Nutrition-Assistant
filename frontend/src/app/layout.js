@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="h-full bg-[#fff8f9]">
+    <html lang="en" className="h-full bg-[#FFFDF7]">
       <body className="min-h-full flex flex-col antialiased text-rose-950">
         <AuthProvider>
           <LayoutFrame>

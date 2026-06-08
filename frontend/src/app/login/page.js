@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fff8f9] px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="flex min-h-screen items-center justify-center bg-[#FFFDF7] px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Decorative Blobs */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-pink-300/20 blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 rounded-full bg-rose-300/20 blur-3xl" />

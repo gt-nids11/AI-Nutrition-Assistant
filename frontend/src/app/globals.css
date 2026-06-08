@@ -1,31 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
-  --font-serif: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
-  --font-mono: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif;
-}
+  --font-sans: "Oswald", sans-serif;
+  --font-serif: "Oswald", sans-serif;
+  --font-mono: "Oswald", sans-serif;
 
-@font-face {
-  font-family: "Virgil";
-  src: url("/fonts/Virgil.woff2") format("woff2");
-  font-display: swap;
-}
+  /* Custom Color Theme overrides for standard utility classes */
+  --color-pink-50: #FFF4B8; /* Soft Yellow background/accent */
+  --color-pink-100: #FFF4B8; 
+  --color-pink-200: #FFE08A; /* Border yellow */
+  --color-pink-300: #FFD93D; /* Primary Yellow */
+  --color-pink-400: #FF7EB8; /* Secondary Pink */
+  --color-pink-500: #FF4FA3; /* Primary Pink */
+  --color-pink-550: #FF4FA3;
+  --color-pink-600: #E03B8C;
+  --color-pink-700: #C22B75;
+  --color-pink-800: #A31D5E;
+  --color-pink-900: #85104A;
 
+  --color-rose-50: #FFFDF7; /* Background */
+  --color-rose-100: #FFF4B8; /* Soft Yellow */
+  --color-rose-200: #FFE08A; /* Border Yellow */
+  --color-rose-300: #FFD93D;
+  --color-rose-400: #FF7EB8; /* Secondary Pink */
+  --color-rose-500: #FF4FA3; /* Primary Pink */
+  --color-rose-600: #E03B8C;
+  --color-rose-700: #C22B75;
+  --color-rose-800: #1F1F1F; /* Primary Text */
+  --color-rose-900: #1F1F1F;
+  --color-rose-950: #1F1F1F;
+
+  --color-yellow-50: #FFFDF7;
+  --color-yellow-100: #FFF4B8;
+  --color-yellow-200: #FFE08A;
+  --color-yellow-300: #FFD93D;
+  --color-yellow-400: #FF7EB8;
+  --color-yellow-500: #FF4FA3;
+}
 
 :root {
-  --background: #fff5f6; /* Soft pastel pink */
-  --foreground: #471921; /* Deep rose-charcoal */
+  --background: #FFFDF7;
+  --foreground: #1F1F1F;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: "Virgil", "Architects Daughter", "Caveat", cursive, sans-serif !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  font-family: "Oswald", sans-serif !important;
 }
 
-
-/* Custom Scrollbars in soft rose tones */
+/* Custom Scrollbars in soft palette tones */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -36,12 +61,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fbcfe8; /* pink-200 */
+  background: #FFE08A;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f472b6; /* pink-400 */
+  background: #FF7EB8;
 }
 
 /* Fade-in animations */
@@ -60,39 +85,73 @@ body {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Custom Drop Shadows for Text and Headings to look premium & hand-drawn */
+/* Typography styles to ensure Oswald font hierarchy is clean */
 h1 {
-  text-shadow: 2px 2px 0px rgba(244, 114, 182, 0.25); /* solid offset pink shadow */
+  font-family: "Oswald", sans-serif !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
 }
 
 h2, h3 {
-  text-shadow: 1.5px 1.5px 0px rgba(244, 114, 182, 0.2); /* solid offset pink shadow */
+  font-family: "Oswald", sans-serif !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
 }
 
 h4, h5, h6 {
-  text-shadow: 1px 1px 0px rgba(244, 114, 182, 0.15);
+  font-family: "Oswald", sans-serif !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
 }
 
-/* Make page titles have a distinct separation */
+button, input, select, textarea, label, span, p, a, div {
+  font-family: "Oswald", sans-serif !important;
+}
+
+/* Custom Page titles margin styling */
 h1.text-3xl {
   margin-bottom: 0.35rem;
 }
 
-/* Card division system - adds a solid, sketchy border and pop-out drop shadow */
+/* Premium Card Overhaul with soft shadows and Yellow-Pink theme border/hover states */
 .bg-white.rounded-3xl,
 .bg-white.p-6.rounded-3xl,
 .bg-white.p-8.rounded-3xl {
-  border: 2px solid #fbcfe8 !important; /* Thick pink-200 border for clean division */
-  box-shadow: 5px 5px 0px rgba(244, 114, 182, 0.15) !important; /* Premium hand-drawn shadow */
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #FFE08A !important; /* yellow border */
+  box-shadow: 0 10px 30px -10px rgba(255, 79, 163, 0.08), 0 1px 3px rgba(255, 217, 61, 0.05) !important; /* Soft premium pinkish shadow */
+  border-radius: 20px !important; /* Smooth rounded corner */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background-color: #FFFFFF !important;
 }
 
 .bg-white.rounded-3xl:hover,
 .bg-white.p-6.rounded-3xl:hover,
 .bg-white.p-8.rounded-3xl:hover {
-  transform: translate(-1.5px, -1.5px);
-  box-shadow: 7.5px 7.5px 0px rgba(244, 114, 182, 0.22) !important; /* Lifted state */
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 35px -10px rgba(255, 79, 163, 0.15), 0 4px 12px rgba(255, 217, 61, 0.1) !important; /* Premium lift */
+  border-color: #FF4FA3 !important; /* Hover border pink */
 }
 
+/* Custom premium hover states with Yellow-Pink gradients */
+.bg-pink-500 {
+  background-color: #FF4FA3 !important;
+  color: #FFFFFF !important;
+  transition: all 0.3s ease !important;
+}
+.bg-pink-500:hover {
+  background: linear-gradient(135deg, #FF4FA3 0%, #FFD93D 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(255, 79, 163, 0.25) !important;
+}
 
-
+.bg-pink-50 {
+  background-color: #FFF4B8 !important; /* Soft Yellow */
+  color: #FF4FA3 !important; /* Primary Pink Text */
+  border-color: #FFE08A !important;
+  transition: all 0.3s ease !important;
+}
+.bg-pink-50:hover {
+  background: linear-gradient(135deg, #FFF4B8 0%, #FF7EB8 100%) !important;
+  color: #1F1F1F !important;
+  border-color: #FF7EB8 !important;
+}

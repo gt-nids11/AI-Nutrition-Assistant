@@ -117,13 +117,13 @@ export default function HistoryPage() {
         <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full min-w-[550px] overflow-visible">
           <defs>
             <linearGradient id="historyGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ec4899" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#FF4FA3" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#FF4FA3" stopOpacity="0.0" />
             </linearGradient>
           </defs>
 
           {/* Grid lines */}
-          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#fbcfe8" strokeWidth={1} />
+          <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#FFE08A" strokeWidth={1} />
           
           {/* Target Baseline */}
           <line 
@@ -131,11 +131,11 @@ export default function HistoryPage() {
             y1={targetY} 
             x2={chartWidth - padding} 
             y2={targetY} 
-            stroke="#f43f5e" 
+            stroke="#FF4FA3" 
             strokeWidth={1} 
             strokeDasharray="4,4" 
           />
-          <text x={chartWidth - padding - 60} y={targetY - 5} fill="#f43f5e" fontSize={8} className="font-extrabold">
+          <text x={chartWidth - padding - 60} y={targetY - 5} fill="#1F1F1F" fontSize={8} className="font-extrabold">
             Target: {calorieTarget} kcal
           </text>
 
@@ -143,20 +143,20 @@ export default function HistoryPage() {
           {areaPathData && <path d={areaPathData} fill="url(#historyGradient)" />}
 
           {/* Line Path */}
-          {pathData && <path d={pathData} fill="none" stroke="#db2777" strokeWidth={2} />}
+          {pathData && <path d={pathData} fill="none" stroke="#FF4FA3" strokeWidth={2} />}
 
           {/* Data Nodes */}
           {points.map((p, idx) => (
             <g key={idx}>
-              <circle cx={p.x} cy={p.y} r={3} fill="#ec4899" stroke="#ffffff" strokeWidth={1} />
+              <circle cx={p.x} cy={p.y} r={3} fill="#FFD93D" stroke="#FF4FA3" strokeWidth={1.5} />
               
               {/* Show text values on nodes for week, hide/reduce for month to keep clean */}
               {(filter === 'week' || idx % 3 === 0) && (
                 <>
-                  <text x={p.x} y={p.y - 8} fill="#881337" fontSize={7} textAnchor="middle" className="font-bold">
+                  <text x={p.x} y={p.y - 8} fill="#1F1F1F" fontSize={7} textAnchor="middle" className="font-bold">
                     {p.val}
                   </text>
-                  <text x={p.x} y={chartHeight - padding + 12} fill="#9f1239" fontSize={7} textAnchor="middle" className="font-bold">
+                  <text x={p.x} y={chartHeight - padding + 12} fill="#1F1F1F" fontSize={7} textAnchor="middle" className="font-bold">
                     {p.date}
                   </text>
                 </>
